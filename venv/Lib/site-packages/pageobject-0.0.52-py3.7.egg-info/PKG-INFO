@@ -1,0 +1,23 @@
+Metadata-Version: 1.1
+Name: pageobject
+Version: 0.0.52
+Summary: Page Object implementation
+Home-page: https://github.com/lukas-linhart/pageobject
+Author: Lukas Linhart
+Author-email: lukas.linhart.1981@gmail.com
+License: MIT
+Description: Page Object design pattern implementation using selenium WebDriver
+Keywords: pageobject browser automation
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: POSIX
+Classifier: Operating System :: MacOS :: MacOS X
+Classifier: Operating System :: Microsoft :: Windows
+Classifier: Topic :: Software Development :: Quality Assurance
+Classifier: Topic :: Software Development :: Testing
+Classifier: Programming Language :: Python :: 2
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5

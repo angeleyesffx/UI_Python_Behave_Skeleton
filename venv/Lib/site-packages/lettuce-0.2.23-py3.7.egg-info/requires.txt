@@ -1,0 +1,4 @@
+sure
+fuzzywuzzy
+python-subunit
+colorama
