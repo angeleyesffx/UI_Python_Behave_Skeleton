@@ -1,64 +1,71 @@
-from features.pages.homepage import HomePage
+import os
+import yaml
+import datetime
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
+from allure_behave.hooks import allure_report
+from Screenshot import Screenshot_Clipping
 
-# local dir used to wait for an element in main/home page
-local_directories = {
-    "searching_bar": (By.ID, 'horus-querytext')
-}
-# tuple used for wait element
-find_it = local_directories["searching_bar"]
+_file_path = os.path.dirname(__file__)
+allure_report(_file_path + "/results")
 
 
-# JSON preparation if more info stored in the config file
-# def load_json(json_file):
-#     data = load_file(json_file)
-#     json_data = json.loads(data)
-#     return json_data
-#
-#
-# def load_file(filename):
-#     with open(filename, 'r') as f:
-#         data = f.read()
-#     return data
-#
-# before all used when bigger project and data is read from JSON file
-# def before_all(context):
-#     context.env_file = "./myfile.json"
-#     context.env = load_json(context.env_file)
-#     if "location" in context.env.keys():
-#         context.location = context.env["location"]["url"]
-#         a = context.location
-#         print(a)
+def browser_config(context, browser_name):
 
-# before all scenario allows me to use always fresh browser without cache. Every time a new browser object is created
+    if not browser_name != "firefox":
+        option = webdriver.FirefoxOptions()
+        option.add_argument("--start-maximized")
+        option.add_argument("--disable-geolocation")
+        option.add_argument("--ignore-certificate-errors")
+        option.add_argument("--disable-popup-blocking")
+        option.add_argument("--disable-translate")
+        driver = webdriver.Firefox(firefox_options=option)
+        return driver
+
+    if not browser_name != "chrome":
+        option = webdriver.ChromeOptions()
+        option.add_argument("--start-maximized")
+        option.add_argument("--disable-geolocation")
+        option.add_argument("--ignore-certificate-errors")
+        option.add_argument("--disable-popup-blocking")
+        option.add_argument("--disable-translate")
+        driver = webdriver.Chrome(chrome_options=option)
+        return driver
+
+    if not browser_name != "edge":
+        driver = webdriver.Edge()
+        return driver
+
+
+def take_screenshot_on_failure(context, scenario):
+    path_screenshots = (_file_path + "/screenshots")
+    if not os.path.exists(path_screenshots):
+        os.makedirs(path_screenshots)
+    date_hour = datetime.datetime.now().strftime("%d-%m-%y-%H-%M-%S")
+    scenario_name = scenario.feature.name.replace(' ', '_')
+    print_file_failed = "BUG-" + scenario_name + "-" + date_hour + ".png"
+    Screenshot_Clipping.Screenshot().full_Screenshot(context.browser, save_path=path_screenshots, image_name=print_file_failed)
+
 
 def before_scenario(context, scenario):
-    option = webdriver.ChromeOptions()
-    option.add_argument("--start-maximized")
-    # driver = webdriver.Firefox()
-    context.location = "http://www.google.com"
-    context.browser = webdriver.Chrome()  # if you have set chromedriver in your PATH
-    context.browser.implicitly_wait(5)
-    context.browser.set_page_load_timeout(5)
+    browser_name = context.config.userdata.get('browser')
+    driver = browser_config(context, browser_name)
+    context.browser = driver
+    context.browser.implicitly_wait(10)
+    context.browser.set_page_load_timeout(10)
+    context.location = context.config.userdata.get('environment')
+    environment = yaml.safe_load(open(os.path.dirname(__file__) + "/config.yml"))
+    context.location = environment.get(context.config.userdata['environment']).get('url')
     context.browser.get(context.location)
-    context.home_page = HomePage(context.browser, context.location)
+
+    #--------------iPhone--------------#
+    #driver = webdriver.Remote(browser_name="iphone", command_executor='http://172.24.101.36:3001/hub')
+    #-------------Android--------------#
+    #driver = webdriver.Remote(browser_name="android", command_executor='http://127.0.0.1:8080/hub')
 
 
-# context.search_bar = SearchBar(context.browser, context.location)
-# context.searching_page = SearchingPage(context.browser, context.location)
-
-
-def wait_for_click_element(context, find_it):
-    try:
-        wait = WebDriverWait(context.browser, 5)
-        expected_element = EC.element_to_be_clickable(find_it)
-        wait.until(expected_element)
-    except TimeoutError:
-        raise
-
-
-def close(self):
-    self.driver.close()
+def after_scenario(context, scenario):
+    if scenario.status == 'failed':
+        take_screenshot_on_failure(context, scenario)
+        context.browser.close()
+    else:
+        context.browser.close()
