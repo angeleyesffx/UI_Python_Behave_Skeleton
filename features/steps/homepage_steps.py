@@ -2,6 +2,7 @@ from behave import *
 from nose.tools import assert_equals
 from selenium.webdriver.common.by import By
 from features.datapool import DATA_ACCESS
+from features.object import Singleton
 
 from features.pages.basepage import BasePage
 from features.pages.homepage import HomePage
@@ -9,6 +10,8 @@ from features.pages.homepage import HomePage
 
 @given(u'I navigate to the Google Home page')
 def navigate_to_home_page(context):
+    teste = Singleton.getInstance(context, HomePage)
+    print(teste.project_url)
     context.home_page = BasePage.instance_page(HomePage,context)
     assert_equals(context.browser.current_url, "{}".format(context.home_page.project_url))
 

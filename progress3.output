@@ -1,0 +1,12 @@
+Search    # features/search.feature
+  Search Google  F
+--------------------------------------------------------------------------------
+FAILURE in step 'I navigate to the Google Home page' (features/search.feature:4):
+Assertion Failed: 'https://www.google.com/?gws_rd=ssl' != 'https://www.trivago.ie/'
+- https://www.google.com/?gws_rd=ssl
++ https://www.trivago.ie/
+
+Captured stdout:
+https://www.trivago.ie/
+--------------------------------------------------------------------------------
+
