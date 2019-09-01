@@ -22,8 +22,6 @@ class BasePage(object):
             message = "Nenhum resultado correspondente para os parametros data = "+ data +", key = " + key +" foi encontrado no DataPool."
             raise Exception(message)
 
-    def instance_page(page_name, context):
-        return page_name(context.browser, context.location)
 
     def wait_till_specific_element_is_not_displayed(self, element):
         try:

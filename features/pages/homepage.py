@@ -9,9 +9,7 @@ class HomePage(BasePage):
 
     local_directories = {
 
-        "slogan": (
-            By.CLASS_NAME, 'hero__title'),
-        "filter_on_search_page": (
-            By.ID, 'js_filterlist')
+        "slogan": "hero__title",
+        "filter_on_search_page": "js_filterlist"
 
     }

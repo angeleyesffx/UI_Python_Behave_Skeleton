@@ -1,13 +1,11 @@
-<testsuite errors="0" failures="1" hostname="ANGELEYES-NOTE" name="search.Search" skipped="0" tests="1" time="0.008005" timestamp="2019-08-30T01:18:29.483179"><testcase classname="search.Search" name="Search Google" status="failed" time="0.008005"><failure message="'https://www.google.com/?gws_rd=ssl' != 'https://www.trivago.ie/'&#10;- https://www.google.com/?gws_rd=ssl&#10;+ https://www.trivago.ie/&#10;" type="AssertionError">
+<testsuite errors="0" failures="1" hostname="ANGELEYES-NOTE" name="search.Search" skipped="0" tests="1" time="0.008006" timestamp="2019-08-31T22:59:09.158388"><testcase classname="search.Search" name="Search Google" status="failed" time="0.008006"><failure message="'https://www.google.com/?gws_rd=ssl' != 'https://www.trivago.ie/'&#10;- https://www.google.com/?gws_rd=ssl&#10;+ https://www.trivago.ie/&#10;" type="AssertionError">
 <![CDATA[
 Failing step: Given I navigate to the Google Home page ... failed in 0.008s
 Location: features/search.feature:4
 Assertion Failed: 'https://www.google.com/?gws_rd=ssl' != 'https://www.trivago.ie/'
 - https://www.google.com/?gws_rd=ssl
 + https://www.trivago.ie/
-
-Captured stdout:
-https://www.trivago.ie/]]>
+]]>
 </failure><system-out>
 <![CDATA[
 @scenario.begin
@@ -18,9 +16,5 @@ https://www.trivago.ie/]]>
 
 @scenario.end
 --------------------------------------------------------------------------------
-
-Captured stdout:
-https://www.trivago.ie/
-
 ]]>
 </system-out></testcase></testsuite>

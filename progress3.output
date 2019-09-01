@@ -6,7 +6,5 @@ Assertion Failed: 'https://www.google.com/?gws_rd=ssl' != 'https://www.trivago.i
 - https://www.google.com/?gws_rd=ssl
 + https://www.trivago.ie/
 
-Captured stdout:
-https://www.trivago.ie/
 --------------------------------------------------------------------------------
 

@@ -12,3 +12,7 @@ class Singleton:
         if Singleton.__instance is None:
             Singleton(classe)
             return Singleton.__instance
+        else:
+            Singleton.__instance = None
+            Singleton(classe)
+            return Singleton.__instance
