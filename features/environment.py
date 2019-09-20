@@ -55,6 +55,12 @@ def before_scenario(context, scenario):
     context.location = context.config.userdata.get('environment')
     environment = yaml.safe_load(open(os.path.dirname(__file__) + "/config.yml"))
     context.location = environment.get(context.config.userdata['environment']).get('url')
+    context.username_some_api = environment.get(context.config.userdata['environment']).get('username_some_api')
+    context.password_some_api = environment.get(context.config.userdata['environment']).get('password_some_api')
+    context.username_whatever_api = environment.get(context.config.userdata['environment']).get('username_whatever_api')
+    context.password_whatever_api = environment.get(context.config.userdata['environment']).get('password_whatever_api')
+    context.some_api_url = environment.get(context.config.userdata['environment']).get('some_api_url')
+    context.whatever_api = environment.get(context.config.userdata['environment']).get('whatever_api_url')
     context.browser.get(context.location)
 
     #--------------iPhone--------------#
