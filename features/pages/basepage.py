@@ -1,35 +1,39 @@
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-import xml.etree.ElementTree as ET
-import requests
+import json
 import random
 import string
-import json
-import pymysql
-import datetime
-import queue
-import os
 import time
-import pdb
+import xml.dom.minidom as DOM
+import xml.etree.ElementTree as ET
+import pymysql
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver import ActionChains
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.wait import WebDriverWait
 
-#----------------------------------------------------------------------------------------------------------------------#
-#Import pdb allowed to use the debbuger module using the command line pdb.set_trace(), before the code that you want to#
-#analise.                                                                                                              #
-#   Example:                                                                                                           #
-#           def method_x(args, value):                                                                                 #
-#               pdb.set_trace()                                                                                        #
-#               while True:                                                                                            #
-#                    key = args.popitem(value)                                                                         #
-#----------------------------------------------------------------------------------------------------------------------#
-
-#----------------------------------------------------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------------------------------------------------#
 # BasePage is a common class where the developer can write the necessary methods in python and re-use on               #
 # entire test, make sure the methods that you will write here are flexible, without constants or hardcode              #
 # data.                                                                                                                #
 # Verify method names are readable to facilitate future maintenance and make it easier for other                       #
 # developers to use the method.                                                                                        #
-#----------------------------------------------------------------------------------------------------------------------#
+# ----------------------------------------------------------------------------------------------------------------------#
+
+# ----------------------------------------------------------------------------------------------------------------------#
+# Import pdb allowed to use the debbuger module using the command line pdb.set_trace(), before the code that you want to#
+# analise.                                                                                                              #
+#   Example:                                                                                                           #
+#           def method_x(args, value):                                                                                 #
+#               pdb.set_trace()                                                                                        #
+#               while True:                                                                                            #
+#                    key = args.popitem(value)                                                                         #
+# ----------------------------------------------------------------------------------------------------------------------#
+
+
+class Actions(ActionChains):
+    def wait(self, time_s: float):
+        self._actions.append(lambda: time.sleep(time_s))
+        return self
 
 class BasePage(object):
 
@@ -67,39 +71,58 @@ class BasePage(object):
          return email
 ####----------------------------------------- String Manipulation Methods ------------------------------------------####
 
-    def split_string_between(value, a, b):
+    def split_string_between(string_value, slice_a, slice_b):
         """Find and validate before-part and return middle part."""
-        pos_a = value.find(a)
+        pos_a = string_value.find(slice_a)
         if pos_a == -1: return ""
         #Find and validate after part.
-        pos_b = value.rfind(b)
+        pos_b = string_value.rfind(slice_b)
         if pos_b == -1: return ""
         #Return middle part.
-        adjusted_pos_a = pos_a + len(a)
+        adjusted_pos_a = pos_a + len(slice_a)
         if adjusted_pos_a >= pos_b: return ""
-        return value[adjusted_pos_a:pos_b]
+        return string_value[adjusted_pos_a:pos_b]
 
-    def split_string_before(value, a):
+    def split_string_before(string_value, slice_a):
         """Find first part and return slice before it."""
-        pos_a = value.find(a)
+        pos_a = string_value.find(slice_a)
         if pos_a == -1: return ""
-        return value[0:pos_a]
+        return string_value[0:pos_a]
 
-    def split_string_after(value, a):
+    def split_string_after(string_value, slice_a):
         """Find and validate first part and returns chars after the found string."""
-        pos_a = value.rfind(a)
+        pos_a = string_value.rfind(slice_a)
         if pos_a == -1: return ""
         #Returns chars after the found string.
-        adjusted_pos_a = pos_a + len(a)
-        if adjusted_pos_a >= len(value): return ""
-        return value[adjusted_pos_a:]
+        adjusted_pos_a = pos_a + len(slice_a)
+        if adjusted_pos_a >= len(string_value): return ""
+        return string_value[adjusted_pos_a:]
 
+    def remove_chars_from_string(string_value, char_list):
+        """Remove all characters in list from string."""
+        new_string = string_value
+        for char in char_list:
+        #Remove the char in list from the string value.
+            new_string = new_string.replace(char, "")
+        return new_string
 
+    def replace_string_with(string_value, old_string, new_string):
+        #Replace the string for another value.
+        result_string = string_value.replace(old_string, new_string)
+        return result_string
+
+    def empty_string_to_none_string(string_value):
+        # Replace the string "" or '' for None.
+         if string_value is '' or "":
+            return None
+         else:
+             return string_value
 #----------------------------------------------------------------------------------------------------------------------#
 #                     Methods that connect and manipulate datasource or database information                           #
 #----------------------------------------------------------------------------------------------------------------------#
 
 ####-------------------------------------------- Database Methods --------------------------------------------------####
+
 
     def open_connection_with_database(host, port, username, password, database):
         try:
@@ -108,15 +131,6 @@ class BasePage(object):
             print("Error in MySQL connection with "+database+" database.")
         else:
             return db_con
-
-
-    def open_connection_with_database2(host, port, username, password, database):
-        try:
-            db_con = pymysql.connect(host=host, port=port, user=username, passwd=password, db=database, cursorclass=pymysql.cursors.DictCursor)
-        except Exception:
-            print("Error in MySQL connection with "+database+" database.")
-        else:
-            return db_con.cursor(pymysql.cursors.SSCursor)
 
     def get_columns_from_dict(source, args_key):
         """Convert a dict of arguments into a string to columns separate by comma. Example: 'column_1, column_2, column_3'."""
@@ -141,7 +155,7 @@ class BasePage(object):
             connection.close()
         return result
 
-    def execute_query_from_db(host, port, username, password, database, sql_query):
+    def get_entire_result_from_executed_query(host, port, username, password, database, sql_query):
         connection = BasePage.open_connection_with_database(host, port, username, password, database)
         try:
             with connection.cursor() as cursor:
@@ -152,6 +166,16 @@ class BasePage(object):
             connection.close()
         return result
 
+    def execute_query_from_db(host, port, username, password, database, sql_query):
+        connection = BasePage.open_connection_with_database(host, port, username, password, database)
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute(sql_query)
+                result = cursor.fetchall()
+                connection.commit()
+        finally:
+            connection.close()
+        return result
 
     def select_all_from_table(db_connection, table):
         con = db_connection
@@ -181,13 +205,15 @@ class BasePage(object):
 # }                                                                                                                    #                                                                          #
 #----------------------------------------------------------------------------------------------------------------------#
 
+
     def datapool_read(source, data, key):
         """Get a list of arguments named as 'data' on the 'source' and search the 'key' on that list."""
         data_args = source.get(data.replace(' ', '_'))
+        dt_key = key.replace(' ', '_')
         if data_args is not None:
             #Search the 'key' on that list
-            if data_args[0].get(key)is not None:
-                return data_args[0].get(key)
+            if data_args[0].get(dt_key)is not None:
+                return data_args[0].get(dt_key)
             else:
                 message = "No matching results for parameter data = "+ data +" on the key = " + key +" was found in DataPool."
                 raise Exception(message)
@@ -196,12 +222,12 @@ class BasePage(object):
             raise Exception(message)
 
 #----------------------------------------------------------------------------------------------------------------------#
-# GET_PAYLOAD_FROM_DATAPOOL is a method use to load a data from a source archive. It's useful to get all information   #
+# GET_LIST_FROM_SOURCE is a method use to load a data from a source archive. It's useful to get all information   #
 # from a collection. For example, if you need to POST the same .json and the data don't need to be changed, the data   #
 # source can emulate the .json.                                                                                        #
 # This method need 2 arguments: the dict's name and the collection's name:                                             #
 #   Example:                                                                                                           #
-#       DATA_SOURCE ={                     payload = get_payload_from_datapool(DATA_SOURCE, 'valid_data')              #
+#       DATA_SOURCE ={                     payload = get_list_from_source(DATA_SOURCE, 'valid_data')                   #
 # 	        "valid_data" :[{               print("Payload is: ", payload)                                              #
 # 	                 "key_1" : "value1",                                                                               #
 #      	             "key_2" : "value2"                                                                                #
@@ -213,7 +239,35 @@ class BasePage(object):
 # }                                                                                                                    #                                                                          #
 #----------------------------------------------------------------------------------------------------------------------#
 
-    def get_payload_from_datapool(source, data):
+# ---------------------------------------------------------------------------------------------------------------------#
+#                                            Methods that manipulate lists                                             #
+# ---------------------------------------------------------------------------------------------------------------------#
+
+####---------------------------------------------- List Methods ----------------------------------------------------####
+
+    def union_list_without_duplicate_item(list_a, list_b):
+        result_list = list(list_a)
+        result_list.extend(x for x in list_b if x not in result_list)
+
+    def intersection_list(list_a, list_b):
+        result_list = [list(filter(lambda x: x in list_a, sublist)) for sublist in list_b]
+        return result_list
+
+    def remove_item_from_list(list, item):
+        result_list = list.remove(item)
+        return result_list
+
+    def get_random_item_from_list(list, item):
+        selected_item = random.choice(list)
+        return selected_item
+
+    def get_different_random_item_from_list(list, item):
+        result_list = list.remove(item)
+        selected_item = random.choice(result_list)
+        return selected_item
+
+
+    def get_list_from_source(source, data):
         """Get a list of arguments named as 'data' on the 'source'."""
         data_args = source.get(data.replace(' ', '_'))
         if data_args is not None:
@@ -223,40 +277,151 @@ class BasePage(object):
             message = "No matching results for parameter data = "+ data +" was found in DataPool."
             raise Exception(message)
 
+
     def get_data_from_dict(dict_args , key):
         """Get a dictionary of arguments named as 'dict_args', search the 'key' on that dict and return the value."""
-        if dict_args  is not None:
+        data_args = dict_args
+        if data_args is not None:
             #Search the 'key' on that list
-            if dict_args.get(key)is not None:
-                return dict_args.get(key)
+            if data_args.get(key)is not None:
+                return data_args.get(key)
         else:
             message = "No matching results for parameter key = "+ key +" was found in Dictionary."
             raise Exception(message)
+
 
 #----------------------------------------------------------------------------------------------------------------------#
 #                                 Methods exclusive for UI testing tool                                                #
 #----------------------------------------------------------------------------------------------------------------------#
 
-    def element_exists(driver, timeout, type, element):
-        """"Given a type(id, css, xpath, class name or name), timeout limit and the element, this method will search it
+#----------------------------------------------------------------------------------------------------------------------#
+# Method that use "selector_type" as (str)argument is implementing selenium.webdriver.common.by                        #
+#                                                                                                                      #
+# class selenium.webdriver.common.by.By[source]                                                                        #
+# Set of supported locator strategies.                                                                                 #
+#    CLASS_NAME = 'class name'                                                                                         #
+#    CSS_SELECTOR = 'css selector'                                                                                     #
+#    ID = 'id'                                                                                                         #
+#    LINK_TEXT = 'link text'                                                                                           #
+#    NAME = 'name'                                                                                                     #
+#    PARTIAL_LINK_TEXT = 'partial link text'                                                                           #
+#    TAG_NAME = 'tag name'                                                                                             #
+#    XPATH = 'xpath'                                                                                                   #
+#----------------------------------------------------------------------------------------------------------------------#
+    def element_exists(driver, timeout, selector_type, element):
+        """Given a selector type(id, css selector, xpath, class name, tag name or name), timeout limit and the element, this method will search it
         on the screen and return a boolean (True/False)."""
         try:
-            if type == 'id' or type == 'ID':
-                WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.ID, element)))
-            elif type == 'css' or type == 'CSS':
-                WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CSS_SELECTOR, element)))
-            elif type == 'xpath' or type == 'XPATH':
-                WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.XPATH, element)))
-            elif type =='class_name' or type == 'CLASS_NAME':
-                WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.CLASS_NAME, element)))
-            elif type == 'name' or type == 'NAME':
-                WebDriverWait(driver, timeout).until(EC.presence_of_element_located((By.NAME, element)))
-            else:
-                 message = "No matching type "+ type +" to this method for searching element "+ element +"."
-                 raise Exception(message)
-        except EC.NoSuchElementException:
+            # wait for the element to appear
+            WebDriverWait(driver, timeout).until(EC.presence_of_element_located((selector_type, element)))
+        except TimeoutException or EC.NoSuchElementException:
+            # if the element appear return True, else return False
              return False
         return True
+
+
+    def fast_element_exists(driver, selector_type, element):
+        """Given a selector type(id, css selector, xpath, class name, tag name or name), timeout limit and the element, this method will search it
+        on the screen and return a boolean (True/False)."""
+        try:
+            # wait for the element to appear
+            driver.find_element(selector_type, element)
+        except EC.NoSuchElementException:
+            # if the element appear return True, else return False
+             return False
+        return True
+
+    def locate_element(driver, timeout, selector_type, element):
+        """Given a selector type(id, css selector, xpath, class name, tag name or name), timeout limit and the element, this method will search it
+        on the screen and return it."""
+        try:
+            # wait for the element to appear, if so return it
+            return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((selector_type, element)))
+        except TimeoutException:
+             message = "The element "+ element + " or the type "+ selector_type +" can't be found or it doesn't exist in the screen."
+             raise Exception(message)
+
+
+    def get_the_ancestor_element(element, parent_xpath):
+        try:
+            #return the ancestor element from the child element
+            return element.find_element(By.XPATH, "ancestor::"+str(parent_xpath))
+        except TimeoutException:
+            message = "The element xpath can't be found or it doesn't exist in the screen."
+            raise Exception(message)
+
+
+    def wait_until_disappears(driver, timeout_to_be_visible, timeout_to_be_invisible, selector_type, element):
+        """Given a selector type(id, css selector, xpath, class name, tag name or name), the timeout limit to the element to be visible and the timeout limit to the element to be disappear,
+        this method will wait until the element isn't displayed on screen."""
+        try:
+            # wait for loading element to appear
+            # - required to prevent prematurely checking if element has disappeared, before it has had a chance to appear
+            if BasePage.element_exists(driver, timeout_to_be_visible, selector_type, element) == True:
+                # then wait for the element to disappear
+                WebDriverWait(driver, timeout_to_be_invisible).until_not(EC.presence_of_element_located((selector_type, element)))
+            else:
+                message = "The element "+ element + " or the type "+ selector_type +" can't be found or it doesn't exist in the screen."
+                raise Exception(message)
+        except TimeoutException:
+            # if the element disappear return True, else return False
+            return False
+        return True
+
+
+    def verify_element_list(driver, timeout, element_list):
+        """Given list of element like: LAYOUT_LIST = [{element, selector_type, text_expected}, {element, selector_type, text_expected}],
+        this method will verify if the elements on the list is on the screen or if the expected data text is on the screen. If it fails a report is return."""
+        fail_results = []
+        for key in element_list:
+            element = BasePage.get_data_from_dict(key, "element")
+            selector_type = BasePage.get_data_from_dict(key, "type")
+            text_expected = BasePage.get_data_from_dict(key, "text_expected")
+            if text_expected == "":
+                 if BasePage.element_exists(driver, timeout, selector_type, element) is False:
+                     message = "The element "+ element + " can't be found or it doesn't exist in the screen."
+                     fail_results.append(message)
+                 else:
+                     pass
+            else:
+               if BasePage.element_exists(driver, timeout, selector_type, element) is False:
+                     message = "The element "+ element + " can't be found or it doesn't exist in the screen."
+                     fail_results.append(message)
+               else:
+                   text_obtained = BasePage.locate_element(driver, timeout, selector_type, element).text
+                   if text_obtained == text_expected:
+                      pass
+                   else:
+                      message = "The text shown by the "+ str(element) + " on the screen is different that was expected. It was expected: '"+str(text_expected)+"' and was obtained: '"+str(text_obtained)+"'."
+                      fail_results.append(message)
+        if fail_results is not None:
+            raise Exception(fail_results)
+
+    def get_element_from_list(driver, selector_type, element_list, attribute, expected_attribute_content):
+        element_list = driver.find_elements(selector_type, element_list)
+        for element in element_list:
+            if element.get_attribute(attribute) == expected_attribute_content:
+                return element
+
+    def get_list_without_an_element(driver, selector_type, element_list, attribute, expected_attribute_content):
+        result_list = []
+        element_list = driver.find_elements(selector_type, element_list)
+        for element in element_list:
+            if element.get_attribute(attribute) != expected_attribute_content:
+                result_list.append(element)
+        if result_list is None:
+            message = "The provied list is empty or the method can't find any results."
+            raise Exception(message)
+        else:
+            return result_list
+
+    def select_option_from_dropdown_list(driver, selector_type, dropdown_element, attribute, expected_attribute_content):
+        element_found = BasePage.locate_element(driver, 10, selector_type, dropdown_element)
+        options_list = element_found.find_elements_by_tag_name('option')
+        for option in options_list:
+            attribute_content = option.get_attribute(attribute)
+            if attribute_content == expected_attribute_content:
+                option.click()
 
 
 #----------------------------------------------------------------------------------------------------------------------#
@@ -274,7 +439,7 @@ class BasePage(object):
 
     def read_xml_file(xml_file):
         """Given a XML file, this method open it and return entire XML body."""
-        xml = open(xml_file, 'r')
+        xml = open(xml_file, 'r', encoding='utf8')
         body = xml.read()
         return body
 
@@ -286,48 +451,122 @@ class BasePage(object):
 #        root_tree = get_xml_root(xml_response)                                                                        #	                                                                                               #
 #----------------------------------------------------------------------------------------------------------------------#
 
-    def verify_responses_status(response):
+    def beautify_xml(element):
+        """Return a pretty-printed XML string for the Element."""
+        element_content = element
+        if type(element_content)!= bytes and type(element_content)!= str:
+            element_content = element.content.decode("utf-8")
+        reparsed = DOM.parseString(element_content)
+        return '\n'.join([line for line in reparsed.toprettyxml(indent=' ' * 2).split('\n') if line.strip()])
+
+
+    def verify_responses_status(response, request):
         if str(response) != '<Response [500]>':
             return True
         else:
             message = "The status is "+str(response)+". The system is disable, suspended or the request is badly formatted."
-            print(response.content)
+            print("Resquest used: \n", request)
+            print("Obtained Response: \n", BasePage.beautify_xml(response.content))
             raise Exception(message)
 
-    def get_xml_root(response):
+
+    def get_xml_root(response, endpoint):
         """Given a XML File or XML response from an API, this method open it and return the root(iterable)."""
         response_content = response
         if type(response_content)!= bytes and type(response_content)!= str:
             response_content = response.content.decode("utf-8")
         #Transform the content into tree(iterable)
-        response_tree = ET.ElementTree(ET.fromstring(response_content))
+        try:
+          tree = ET.fromstring(response_content)
+        except ET.ParseError as err:
+            error = BasePage.split_string_before(err.msg, ": line ")
+            if error == 'not well-formed (invalid token)':
+              message = "Also check the endpoint: "+ endpoint
+            raise Exception(message)
+        response_tree = ET.ElementTree(tree)
         response_root = response_tree.getroot()
         return response_root
 
-    def find_value_on_xml(response, tag):
+    def count_blocks_by_id_tag_on_xml(response, tag, endpoint):
+        """Given a XML response from API and specific unique id tag, this method count the number of blocks in the XML response."""
+        # Get the root from the XML File or XML response from an API
+        count_blocks = 0
+        response_root = BasePage.get_xml_root(response, endpoint)
+        # Search the element where the tag name is
+        for data_block in response_root.findall('.//'+ tag):
+            count_blocks = count_blocks+1
+        return count_blocks
+
+    def find_value_on_xml(response, tag, endpoint):
         """Given a XML response from API and specific tag name, this method search that tag name and return the value."""
         #Get the root from the XML File or XML response from an API
-        response_root = BasePage.get_xml_root(response)
+        response_root = BasePage.get_xml_root(response, endpoint)
+        #for element in response_root.iter():
+            #print(element.getchildren())
+           # print(element.tag)
         #Search the element where the tag name is
         for element in response_root.iterfind('.//'+ tag):
             #Return the value
             return element.text
 
-    def tag_exists_on_xml(response, tag):
+    def find_values_inside_blocks_on_xml(response, tag, endpoint):
+        """Given a XML response from API and specific block and tag name, this method search that tag name and return the value."""
+        # Get the root from the XML File or XML response from an API
+        values_list = []
+        position = 1
+        response_root = BasePage.get_xml_root(response, endpoint)
+        for data_block in response_root.findall('.//'+ tag):
+            for element in data_block.iter():
+                # Return the list of values in blocks
+                values_list.append([position, element.tag, element.text])
+            position = position + 1
+        #print(*values_list, sep="\n")
+        return values_list
+
+    def get_data_from_tag_parent_list(tag_parent_list, tag_name, tag_value):
+        """This method search the specific tag name and tag value inside the return of the method find_values_inside_blocks_on_xml, then return the specific data block."""
+        index = 1
+        values_list = []
+        for elem in tag_parent_list:
+            if tag_name == elem[1] and tag_value == elem[2]:
+                index = elem[0]
+                for elem1 in tag_parent_list:
+                    if elem1[0] == index:
+                        values_list.append([elem1[1], elem1[2]])
+        #print(values_list)
+        return values_list
+
+    def remove_tag_from_xml_response(response, parent_tag, child_tag, endpoint):
+        response_root = BasePage.get_xml_root(response, endpoint)
+        for child in response_root.findall(parent_tag):
+            for element in child.findall(child_tag):
+                child.remove(element)
+        new_response = response_root
+        return new_response
+
+    def remove_closed_tag_from_xml_response(response, closed_tag, closed_child_tag, parent_tag, endpoint):
+        response_root = BasePage.get_xml_root(response, endpoint)
+        for child in response_root.findall(closed_tag):
+            for element in child.findall(closed_child_tag):
+                return response_root
+        new_response = BasePage.remove_tag_from_xml_response(response, parent_tag, closed_tag, endpoint)
+        return new_response
+
+    def tag_exists_on_xml(response, tag, endpoint):
         """Given a XML response from API and specific tag name, this method search if that tag name exists on the XML response and return a boolean."""
         #Get the root from the XML File or XML response from an API
-        response_root = BasePage.get_xml_root(response)
+        response_root = BasePage.get_xml_root(response, endpoint)
         #Search the element where the tag name is
         for element in response_root.iterfind('.//'+ tag):
             return True
         return False
 
-    def tag_list_exists_on_xml(response, tag_list):
+    def tag_list_exists_on_xml(response, tag_list, endpoint):
         """Given a XML response from API and specific list of tags, this method verify if all tags exists in the response and return a boolean."""
         args = tag_list
         #Search the list of elements
         for args_key, args_value in args.items():
-            item = BasePage.tag_exists_on_xml(response, args_value)
+            item = BasePage.tag_exists_on_xml(response, args_value, endpoint)
             #Validate if tag exists
             if item is True:
                 pass
@@ -335,12 +574,12 @@ class BasePage(object):
                 return False
         return True
 
-    def tag_list_is_on_xml(response, tag_list, namespace):
+    def tag_list_is_on_xml(response, tag_list, namespace, endpoint):
         """Given a XML response from API and specific list of tags, this method verify if all tags are in the response."""
         args = tag_list
         #Search the list of elements
         for key in args.items():
-                item = BasePage.tag_exists_on_xml(response, key)
+                item = BasePage.tag_exists_on_xml(response, key, endpoint)
                 #Validate the tag name when it is found
                 if item is True:
                     #print("The tag <"+ key[1].replace(namespace, "")+"> on the tag list was in the XML response.")
@@ -349,57 +588,70 @@ class BasePage(object):
                     message = "The tag <"+ key.replace(namespace, "") +"> on the tag list wasn't in the XML response."
                     raise Exception(message)
 
-
-    def verify_hit(response, tag_list):
+    def verify_hit(response, tag_list, endpoint):
         """Given a XML response from API and specific list of tags, this method verify if all tags are in the response."""
         args = tag_list
         #Search the list of elements
         for key in args.items():
-            item = BasePage.tag_exists_on_xml(response, key)
+            item = BasePage.tag_exists_on_xml(response, key, endpoint)
             #Validate the value when it is found
             if item:
                 return True
             else:
                 return False
 
-    def confirm_persistence_of_response_in_different_sources(source_a, source_b, args, namespace_a, namespace_b, source_name_a, source_name_b):
+    def confirm_persistence_of_response_in_different_sources(source_a, source_b, args, namespace_a, namespace_b, source_name_a, source_name_b, endpoint_a, endpoint_b):
         """Given an XML File or XML response in different sources, this method search in the both sources the tag names
         and validate the values."""
+        fail_list=[]
         for key in args.items():
             #Get tag name from both arguments list
             #Search them in their respective XML File or XML response
-            item_a = BasePage.find_value_on_xml(source_a, key[1])
-            item_b = BasePage.find_value_on_xml(source_b, key[1])
+            item_a = BasePage.find_value_on_xml(source_a, key[1], endpoint_a)
+            item_b = BasePage.find_value_on_xml(source_b, key[1], endpoint_b)
             #Validate the value when it is found
             if item_a == item_b:
-                #print("The values on the "+ key[1].replace(namespace_a, "") +" = "+ str(item_a) +" and "+ key[1].replace(namespace_b, "") + " = "+ str(item_b)+" match.")
+                #print("The values on the "+ key[1] +" = "+ str(item_a) +" and "+ key[1] + " = "+ str(item_b)+" match.")
                 pass
             else:
                 message = "The values on the "+source_name_a+" "+ key[1].replace(namespace_a, "") +" = "+ str(item_a) +" and "+source_name_b+" "+ key[1].replace(namespace_b, "") + " = "+ str(item_b)+" didn't match."
-                raise Exception(message)
+                fail_list.append(message)
+        if not fail_list:
+            pass
+        else:
+            message ="End of Fail List"
+            print(*fail_list, sep="\n")
+            raise Exception(message)
 
-
-    def compare_values_from_two_xml(xml_a, xml_b, args_a, args_b, namespace_a, namespace_b):
+    def compare_values_from_two_xml(xml_a, xml_b, args_a, args_b, namespace_a, namespace_b, source_name_a, source_name_b, endpoint_a, endpoint_b):
         """Given two XML Files, this method search in the both files the tag name arguments and validate the values."""
+        fail_list=[]
         while True:#It simulate a DO/WHILE
             #Pop the first tag name from both arguments list
             key_a = args_a.popitem()
             key_b = args_b.popitem()
             #Search them in their respective XML File or XML response
-            item_a = BasePage.find_value_on_xml(xml_a, key_a[1])
-            item_b = BasePage.find_value_on_xml(xml_b, key_b[1])
+            item_a = BasePage.find_value_on_xml(xml_a, key_a[1], endpoint_a)
+            item_b = BasePage.find_value_on_xml(xml_b, key_b[1], endpoint_b)
             #Validate the value when it is found
             if item_a == item_b:
-                #print("The values on the "+ key_a[1].replace(namespace_a, "") +" = "+ str(item_a) +" and "+ key_b[1].replace(namespace_b, "") + " = "+ str(item_b)+" match.")
+                #print("Match on the "+ key_a[1].replace(namespace_a, "") +" = "+ str(item_a) +" and "+ key_b[1].replace(namespace_b, "") + " = "+ str(item_b)+" match.")
                 pass
             else:
-                message = "The values on the "+ key_a[1].replace(namespace_a, "") +" = "+ str(item_a) +" and "+ key_b[1].replace(namespace_b, "") + " = "+ str(item_b)+" didn't match."
-                raise Exception(message)
+                message = "The values on the "+source_name_a+" "+ key_a[1].replace(namespace_a, "") +" = "+ str(item_a) +" and "+source_name_b+" "+ key_b[1].replace(namespace_b, "") + " = "+ str(item_b)+" didn't match."
+                #Stored the path list
+                fail_list.append(message)
             count_args_a = len(args_a)
             count_args_b = len(args_b)
             #Stop the loop when one of the arguments list end
             if count_args_a <= 0 or count_args_b <= 0:
                 break
+        if not fail_list:
+            pass
+        else:
+            message ="End of Fail List"
+            print(*fail_list, sep="\n")
+            raise Exception(message)
 
     def list_all_paths_on_xml_starting_from_node(path_list, response_root, start_path,namespace, node_name):
         """Given a XML File or XML response from an API, it will list all path starting it from a specific node. It will
@@ -440,12 +692,12 @@ class BasePage(object):
             path_list.append(new_path)
         return path_list
 
-    def compare_pathlist_from_two_xml_responses(context, system_name_a, system_name_b, response_a, response_b, namespace_a, namespace_b, node_name_a, node_name_b):
+    def compare_pathlist_from_two_xml_responses(context, system_name_a, system_name_b, response_a, response_b, namespace_a, namespace_b, node_name_a, node_name_b, endpoint_a, endpoint_b):
         """Given two XML Files or two XML responses, this method search in the both responses or both files divergent
         paths starting from a specific node and validate it. If any divergent path is found an report of divergences will be provide."""
         #Get both root
-        xml_root_a = BasePage.get_xml_root(response_a)
-        xml_root_b = BasePage.get_xml_root(response_b)
+        xml_root_a = BasePage.get_xml_root(response_a, endpoint_a)
+        xml_root_b = BasePage.get_xml_root(response_b, endpoint_b)
         #Define the path lists and result lists before call the method
         list_a = []
         list_b = []
@@ -477,9 +729,13 @@ class BasePage(object):
             count_result_b = len(list(result_b))
             print("\nTotal Divergent Paths "+system_name_a+":",count_result_a, system_name_a+":", *result_a, sep="\n")
             print("\nTotal Divergent Paths "+system_name_b+":",count_result_b, system_name_b+":", *result_b, sep="\n")
-            message =  "End of Divergent Paths Report"
+            message = "End of Divergent Paths Report"
             raise Exception(message)
 
+    def get_string_around(string_value, slice_a, slice_b):
+            string_a = BasePage.split_string_before(string_value, slice_a)
+            string_b = BasePage.split_string_after(string_value, slice_b)
+            return (string_a.rstrip() + string_b.rstrip())
 
 #----------------------------------------------------------------------------------------------------------------------#
 #                     Methods manipulate JSON files information and responses                                          #

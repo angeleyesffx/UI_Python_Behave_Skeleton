@@ -1,6 +1,6 @@
 from behave import *
 from features.object import Singleton
-from features.pages.base_page import BasePage
+from features.pages.basepage import BasePage
 import requests
 import xml.etree.ElementTree
 

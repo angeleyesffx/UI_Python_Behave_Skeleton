@@ -1,6 +1,6 @@
-<testsuite errors="0" failures="1" hostname="ANGELEYES-NOTE" name="search.Search" skipped="0" tests="1" time="0.008006" timestamp="2019-08-31T22:59:09.158388"><testcase classname="search.Search" name="Search Google" status="failed" time="0.008006"><failure message="'https://www.google.com/?gws_rd=ssl' != 'https://www.trivago.ie/'&#10;- https://www.google.com/?gws_rd=ssl&#10;+ https://www.trivago.ie/&#10;" type="AssertionError">
+<testsuite name="search.Search" tests="1" errors="0" failures="1" skipped="0" time="5.015736" timestamp="2021-06-30T15:29:40.602280" hostname="GHBRLPE06KST0"><testcase classname="search.Search" name="Search Google" status="failed" time="5.015736"><failure type="AssertionError" message="'https://www.google.com/?gws_rd=ssl' != 'https://www.trivago.ie/'&#10;- https://www.google.com/?gws_rd=ssl&#10;+ https://www.trivago.ie/&#10;">
 <![CDATA[
-Failing step: Given I navigate to the Google Home page ... failed in 0.008s
+Failing step: Given I navigate to the Google Home page ... failed in 5.016s
 Location: features/search.feature:4
 Assertion Failed: 'https://www.google.com/?gws_rd=ssl' != 'https://www.trivago.ie/'
 - https://www.google.com/?gws_rd=ssl
@@ -10,7 +10,7 @@ Assertion Failed: 'https://www.google.com/?gws_rd=ssl' != 'https://www.trivago.i
 <![CDATA[
 @scenario.begin
   Scenario: Search Google
-    Given I navigate to the Google Home page ... failed in 0.008s
+    Given I navigate to the Google Home page ... failed in 5.016s
     When I search for "blabla" ... skipped in 0.000s
     Then I should see the results ... skipped in 0.000s
 

@@ -1,3 +1,4 @@
+import time
 from behave import *
 from nose.tools import assert_equals
 from selenium.webdriver.common.by import By
@@ -10,6 +11,7 @@ from features.pages.homepage import HomePage
 @given(u'I navigate to the Google Home page')
 def navigate_to_home_page(context):
     home = Singleton.getInstance(context, HomePage)
+    time.sleep(5)
     assert_equals(context.browser.current_url, "{}".format(home.project_url))
 
 

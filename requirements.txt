@@ -1,0 +1,7 @@
+selenium
+requests
+behave
+allure_behave
+Selenium-Screenshot
+nose
+pymysql2

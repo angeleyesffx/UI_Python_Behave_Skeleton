@@ -1,7 +1,9 @@
+import json
+
 from behave import *
-from features.steps.data_source.some_datasource import DATA_REQUEST
-from features.steps.data_source.other_datasource import new_information
-from features.pages.base_page import BasePage
+#from features.steps.data_source.some_datasource import DATA_REQUEST
+#from features.steps.data_source.other_datasource import new_information
+from features.pages.basepage import BasePage
 from requests.auth import HTTPBasicAuth
 import os
 import requests
