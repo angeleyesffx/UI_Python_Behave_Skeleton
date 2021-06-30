@@ -2,7 +2,7 @@ import json
 
 from behave import *
 #from features.steps.data_source.some_datasource import DATA_REQUEST
-#from features.steps.data_source.other_datasource import new_information
+from features.steps.data_source.other_datasource import new_information
 from features.pages.basepage import BasePage
 from requests.auth import HTTPBasicAuth
 import os
@@ -38,7 +38,7 @@ def send_post_some_request(context, body):
 
 @when(u'the request sends POST to the Other API')
 def send_post_other_request(context):
-    context.endpoint = get_other_endpoint(context)
+    context.endpoint = get_whatever_endpoint(context)
     json_path = os.path.dirname(__file__) + '\\data_source\\other_payloads.json'
     new_information.update({'other_id': context.other_id, 'another_id': context.another_id})
     json_file = BasePage.edit_json(json_path, new_information)

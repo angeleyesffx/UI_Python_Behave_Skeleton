@@ -1,10 +1,15 @@
 Search    # features/search.feature
-  Search Google  F
+  Search Google  ..E
 --------------------------------------------------------------------------------
-FAILURE in step 'I navigate to the Google Home page' (features/search.feature:4):
-Assertion Failed: 'https://www.google.com/?gws_rd=ssl' != 'https://www.trivago.ie/'
-- https://www.google.com/?gws_rd=ssl
-+ https://www.trivago.ie/
+FAILURE in step 'I should see the results' (features/search.feature:6):
+Traceback (most recent call last):
+  File "/home/priscilla/.local/lib/python3.8/site-packages/behave/model.py", line 1329, in run
+    match.run(runner.context)
+  File "/home/priscilla/.local/lib/python3.8/site-packages/behave/matchers.py", line 98, in run
+    self.func(context, *args, **kwargs)
+  File "features/steps/homepage_steps.py", line 28, in get_results
+    raise NotImplementedError(u'STEP: Then I should see the results')
+NotImplementedError: STEP: Then I should see the results
 
 --------------------------------------------------------------------------------
 

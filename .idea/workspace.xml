@@ -4,17 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="850654c5-9df4-46a1-a9f2-4cf40cd45009" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/features/steps/data_source/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Python-Behave.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Python-Behave.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="850654c5-9df4-46a1-a9f2-4cf40cd45009" name="Default Changelist" comment="Update basepage.py&#10;&#10;Update method for manipulate string, xml blocks, etc.">
+      <change afterPath="$PROJECT_DIR$/features/steps/data_source/other_datasource.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/behave.reports/TESTS-search.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/behave.reports/TESTS-search.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/pages/basepage.py" beforeDir="false" afterPath="$PROJECT_DIR$/features/pages/basepage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/pages/homepage.py" beforeDir="false" afterPath="$PROJECT_DIR$/features/pages/homepage.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/features/steps/api_steps.py" beforeDir="false" afterPath="$PROJECT_DIR$/features/steps/api_steps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/features/steps/base_steps.py" beforeDir="false" afterPath="$PROJECT_DIR$/features/steps/base_steps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/features/steps/homepage_steps.py" beforeDir="false" afterPath="$PROJECT_DIR$/features/steps/homepage_steps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/progress3.output" beforeDir="false" afterPath="$PROJECT_DIR$/progress3.output" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -29,9 +29,15 @@
     </option>
   </component>
   <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="Priscilla Rodrigues Martins &lt;angeleyes.ffx@hotmail.com&gt;" />
+      </list>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1Q7sQAQhP4wzUwQwiVICdPbcp3o" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -40,7 +46,7 @@
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/features" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/features/steps/data_source" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyIntegratedToolsModulesConfigurable" />
   </component>
   <component name="PyConsoleOptionsProvider">
@@ -52,6 +58,9 @@
     </option>
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/features/steps/data_source" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\angel_000\Desktop\Python-Behave\features" />
       <recent name="C:\Users\angel_000\Desktop\Python-Behave" />
@@ -92,6 +101,14 @@
       <option name="presentableId" value="Default" />
       <updated>1567132949666</updated>
     </task>
+    <task id="LOCAL-00001" summary="Update basepage.py&#10;&#10;Update method for manipulate string, xml blocks, etc.">
+      <created>1625077954861</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1625077954861</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -105,5 +122,9 @@
       </map>
     </option>
     <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Update basepage.py&#10;&#10;Update method for manipulate string, xml blocks, etc." />
+    <option name="LAST_COMMIT_MESSAGE" value="Update basepage.py&#10;&#10;Update method for manipulate string, xml blocks, etc." />
   </component>
 </project>

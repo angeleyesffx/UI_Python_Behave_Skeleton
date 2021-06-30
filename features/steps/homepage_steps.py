@@ -16,10 +16,13 @@ def navigate_to_home_page(context):
 
 
 @when(u'I search for {search_data}')
-def step_impl(context):
-    raise NotImplementedError(u'STEP: When I search for "blabla"')
-
+def search_for(context, search_data):
+    home = Singleton.getInstance(context, HomePage)
+    search_bar = context.browser.find_element_by_name(home.search_bar)
+    search_bar.clear()
+    search_bar.send_keys(search_data)
 
 @then(u'I should see the results')
-def step_impl(context):
+def get_results(context):
+    home = Singleton.getInstance(context, HomePage)
     raise NotImplementedError(u'STEP: Then I should see the results')

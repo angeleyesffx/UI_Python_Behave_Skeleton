@@ -1,0 +1,3 @@
+[console_scripts]
+xmysql = pymysql2.__main__:run
+

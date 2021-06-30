@@ -5,3 +5,4 @@ allure_behave
 Selenium-Screenshot
 nose
 pymysql2
+PyMySQL
