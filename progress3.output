@@ -1,15 +1,11 @@
 Search    # features/search.feature
-  Search Google  ..E
+  Search the terms on Google -- @1.1   ...
+  Search the terms on Google -- @1.2   ..F
 --------------------------------------------------------------------------------
 FAILURE in step 'I should see the results' (features/search.feature:6):
-Traceback (most recent call last):
-  File "/home/priscilla/.local/lib/python3.8/site-packages/behave/model.py", line 1329, in run
-    match.run(runner.context)
-  File "/home/priscilla/.local/lib/python3.8/site-packages/behave/matchers.py", line 98, in run
-    self.func(context, *args, **kwargs)
-  File "features/steps/homepage_steps.py", line 28, in get_results
-    raise NotImplementedError(u'STEP: Then I should see the results')
-NotImplementedError: STEP: Then I should see the results
+Assertion Failed: 'Apple (Brasil)' != 'Welcome to Python.org'
+- Apple (Brasil)
++ Welcome to Python.org
 
 --------------------------------------------------------------------------------
 

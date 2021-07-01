@@ -1,23 +1,29 @@
-<testsuite name="search.Search" tests="1" errors="1" failures="0" skipped="0" time="5.144476" timestamp="2021-06-30T16:13:36.336162" hostname="GHBRLPE06KST0"><testcase classname="search.Search" name="Search Google" status="failed" time="5.144476"><error type="NotImplementedError" message="STEP: Then I should see the results">
-<![CDATA[
-Failing step: Then I should see the results ... failed in 0.000s
-Location: features/search.feature:6
-Traceback (most recent call last):
-  File "/home/priscilla/.local/lib/python3.8/site-packages/behave/model.py", line 1329, in run
-    match.run(runner.context)
-  File "/home/priscilla/.local/lib/python3.8/site-packages/behave/matchers.py", line 98, in run
-    self.func(context, *args, **kwargs)
-  File "features/steps/homepage_steps.py", line 28, in get_results
-    raise NotImplementedError(u'STEP: Then I should see the results')
-NotImplementedError: STEP: Then I should see the results
-]]>
-</error><system-out>
+<testsuite name="search.Search" tests="2" errors="0" failures="1" skipped="0" time="15.465915" timestamp="2021-07-01T12:15:51.269010" hostname="GHBRLPE06KST0"><testcase classname="search.Search" name="Search the terms on Google -- @1.1 " status="passed" time="6.794745"><system-out>
 <![CDATA[
 @scenario.begin
-  Scenario: Search Google
+  Scenario Outline: Search the terms on Google -- @1.1 
     Given I navigate to the Google Home page ... passed in 5.016s
-    When I search for "blabla" ... passed in 0.128s
-    Then I should see the results ... failed in 0.000s
+    When I search for python ... passed in 1.740s
+    Then I should see the results ... passed in 0.039s
+
+@scenario.end
+--------------------------------------------------------------------------------
+]]>
+</system-out></testcase><testcase classname="search.Search" name="Search the terms on Google -- @1.2 " status="failed" time="8.67117"><failure type="AssertionError" message="'Apple (Brasil)' != 'Welcome to Python.org'&#10;- Apple (Brasil)&#10;+ Welcome to Python.org&#10;">
+<![CDATA[
+Failing step: Then I should see the results ... failed in 0.035s
+Location: features/search.feature:6
+Assertion Failed: 'Apple (Brasil)' != 'Welcome to Python.org'
+- Apple (Brasil)
++ Welcome to Python.org
+]]>
+</failure><system-out>
+<![CDATA[
+@scenario.begin
+  Scenario Outline: Search the terms on Google -- @1.2 
+    Given I navigate to the Google Home page ... passed in 5.015s
+    When I search for apples ... passed in 3.621s
+    Then I should see the results ... failed in 0.035s
 
 @scenario.end
 --------------------------------------------------------------------------------
