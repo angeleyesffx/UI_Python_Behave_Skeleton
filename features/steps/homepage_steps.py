@@ -20,11 +20,13 @@ def search_for(context, search_data):
     home = Singleton.getInstance(context, HomePage)
     search_bar = context.browser.find_element_by_name(home.search_bar)
     search_bar.clear()
-    search_bar.send_keys(search_data)
+    info = home.datapool_read(DATA_ACCESS, search_data, 'language')
+    search_bar.send_keys(info)
     context.browser.find_element_by_css_selector(home.search_button).click()
+
 
 @then(u'I should see the results')
 def get_results(context):
     home = Singleton.getInstance(context, HomePage)
-    assert_equals(context.browser.find_element_by_css_selector(home.first_result).text, "Welcome to Python.org")
+    assert_equals(context.browser.find_element_by_css_selector(home.first_result).text, "Download Python | Python.org")
 

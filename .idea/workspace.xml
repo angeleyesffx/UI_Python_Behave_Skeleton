@@ -5,13 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="850654c5-9df4-46a1-a9f2-4cf40cd45009" name="Default Changelist" comment="Update basepage.py&#10;&#10;Update method for manipulate string, xml blocks, etc.">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/build/behave.reports/TESTS-search.xml" beforeDir="false" afterPath="$PROJECT_DIR$/build/behave.reports/TESTS-search.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/features/pages/homepage.py" beforeDir="false" afterPath="$PROJECT_DIR$/features/pages/homepage.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/datapool.py" beforeDir="false" afterPath="$PROJECT_DIR$/features/datapool.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/pages/basepage.py" beforeDir="false" afterPath="$PROJECT_DIR$/features/pages/basepage.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/features/search.feature" beforeDir="false" afterPath="$PROJECT_DIR$/features/search.feature" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/features/steps/homepage_steps.py" beforeDir="false" afterPath="$PROJECT_DIR$/features/steps/homepage_steps.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/progress3.output" beforeDir="false" afterPath="$PROJECT_DIR$/progress3.output" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/rerun.output" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/rerun.output" beforeDir="false" afterPath="$PROJECT_DIR$/rerun.output" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

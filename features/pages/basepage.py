@@ -213,9 +213,9 @@ class BasePage(object):
         data_args = source.get(data.replace(' ', '_'))
         dt_key = key.replace(' ', '_')
         if data_args is not None:
-            # Search the 'key' on that list
-            if data_args[0].get(dt_key) is not None:
-                return data_args[0].get(dt_key)
+            # Search the 'key' on that list ------> for "python data_args[0].get(dt_key)"
+            if data_args.get(dt_key) is not None:
+                return data_args.get(dt_key)
             else:
                 message = "No matching results for parameter data = " + data + " on the key = " + key + " was found in DataPool."
                 raise Exception(message)

@@ -1,0 +1,16 @@
+node_modules/
+
+# VSCode
+.vscode/
+
+# JIRA plugin
+atlassian-ide-plugin.xml
+
+# Python-Behave
+Python-Behave/features/screenshots/
+Python-Behave/features/results/
+Python-Behave/features/reports/
+
+# Deployment YML files
+scripts/parse-deployment-yaml/temp/*
+

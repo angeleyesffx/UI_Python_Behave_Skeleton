@@ -6,3 +6,4 @@ Selenium-Screenshot
 nose
 pymysql2
 PyMySQL
+PyYaml
