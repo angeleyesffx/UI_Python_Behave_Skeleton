@@ -45,9 +45,9 @@ Download links for your driver Driver:
 
 You can find information about behave framework here:  https://behave.readthedocs.io/en/latest/
 
-**IMPORTANT ---->>>> If you install python3 instead python using in command line python3: 
+**IMPORTANT ---->>>> If you install python3 instead python using in command line python3:**
 
-*   `python3 -m behave --no-capture 
+*   `python3 -m behave --no-capture` 
 
 For change the environment use -D environment=SOME_ENVIRONMENT like command line below:
         *The default environment is always define by behave.ini*
