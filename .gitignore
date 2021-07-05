@@ -8,6 +8,7 @@ atlassian-ide-plugin.xml
 Python-Behave/build
 Python-Behave/pytest-env
 Python-Behave/venv
+Python-Behave/.idea
 Python-Behave/features/screenshots/
 Python-Behave/features/results/
 Python-Behave/features/reports/
