@@ -22,7 +22,7 @@ You can find Installation Guide to your system here:  https://pypi.org/project/p
 **IMPORTANT ---->>>>  If you need to install the dependencies in separate execute the command line:**
                   
                   
-> **Make sure that your pip installation is updated!** 
+> **Make sure that your pip installation is update!** 
 
         
 * `pip install SomeDependencie` 
@@ -30,7 +30,7 @@ You can find Installation Guide to your system here:  https://pypi.org/project/p
 ***Step 4:*** Install Selenium and the apropriate webdrivers
        
 You can find a installation Guide here:  https://selenium-python.readthedocs.io/installation.html
-Download links for your driver Driver:
+Download links for your Driver:
         
         
 | Browser | Link                                                                  |
@@ -63,11 +63,11 @@ For execute a specific feature execute the command line:
         
 * `python -m behave features_path/feature_name.feature` 
 
-For execute a specific WIP scenario or a list of WIP scenarios use above scenario @wip and execute the command line:
+For execute a specific WIP scenario, or a list of WIP scenarios use above scenario @wip and execute the command line:
       
 *  `python -m behave -D environment=desenv --tags=@wip` 
 
-By default, behave captures stdout, this captured output is only shown if a failure occurs.
+By default, behave captures stdout, this captured output is only showing if a failure occurs.
 To print output execute the command line:
     
 *    ` python -m behave --no-capture `
