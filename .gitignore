@@ -9,8 +9,6 @@ Python-Behave/features/screenshots/
 Python-Behave/features/results/
 Python-Behave/features/reports/
 
-# Deployment YML files
-scripts/parse-deployment-yaml/temp/*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -141,3 +139,4 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
