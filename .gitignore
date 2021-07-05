@@ -5,6 +5,9 @@
 atlassian-ide-plugin.xml
 
 # Python-Behave
+Python-Behave/build
+Python-Behave/pytest-env
+Python-Behave/venv
 Python-Behave/features/screenshots/
 Python-Behave/features/results/
 Python-Behave/features/reports/
