@@ -65,7 +65,7 @@ For execute a specific feature execute the command line:
 
 For execute a specific WIP scenario or a list of WIP scenarios use above scenario @wip and execute the command line:
       
-*   `python -m behave -D environment=desenv --tags=@wip` 
+*  `python -m behave -D environment=desenv --tags=@wip` 
 
 By default, behave captures stdout, this captured output is only shown if a failure occurs.
 To print output execute the command line:
