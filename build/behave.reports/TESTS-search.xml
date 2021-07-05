@@ -1,6 +1,6 @@
-<testsuite name="search.Search" tests="2" errors="2" failures="0" skipped="0" time="33.511746" timestamp="2021-07-05T11:37:46.891077" hostname="GHBRLPE06KST0"><testcase classname="search.Search" name="Search the terms on Google -- @1.1 " status="failed" time="16.599426"><error type="NoSuchElementException" message="Message: no such element: Unable to locate element: {&quot;method&quot;:&quot;css selector&quot;,&quot;selector&quot;:&quot;#rso &gt; div:nth-child(1) &gt; div &gt; div &gt; div &gt; div &gt; div &gt; div &gt; div.yuRUbf &gt; a &gt; h3&quot;}&#10;  (Session info: chrome=91.0.4472.114)&#10;">
+<testsuite name="search.Search" tests="2" errors="2" failures="0" skipped="0" time="33.21518" timestamp="2021-07-05T12:02:22.629264" hostname="GHBRLPE06KST0"><testcase classname="search.Search" name="Search the terms on Google -- @1.1 " status="failed" time="16.488945"><error type="NoSuchElementException" message="Message: no such element: Unable to locate element: {&quot;method&quot;:&quot;css selector&quot;,&quot;selector&quot;:&quot;#rso &gt; div:nth-child(1) &gt; div &gt; div &gt; div &gt; div &gt; div &gt; div &gt; div.yuRUbf &gt; a &gt; h3&quot;}&#10;  (Session info: chrome=91.0.4472.114)&#10;">
 <![CDATA[
-Failing step: Then I should see the results ... failed in 10.062s
+Failing step: Then I should see the results ... failed in 10.029s
 Location: features/search.feature:11
 Traceback (most recent call last):
   File "/home/priscilla/.local/lib/python3.8/site-packages/behave/model.py", line 1329, in run
@@ -25,16 +25,16 @@ selenium.common.exceptions.NoSuchElementException: Message: no such element: Una
 <![CDATA[
 @scenario.begin
   Scenario Outline: Search the terms on Google -- @1.1 
-    Given I navigate to the Google Home page ... passed in 5.015s
-    When I search for python ... passed in 1.522s
-    Then I should see the results ... failed in 10.062s
+    Given I navigate to the Google Home page ... passed in 5.011s
+    When I search for python ... passed in 1.449s
+    Then I should see the results ... failed in 10.029s
 
 @scenario.end
 --------------------------------------------------------------------------------
 ]]>
-</system-out></testcase><testcase classname="search.Search" name="Search the terms on Google -- @1.2 " status="failed" time="16.91232"><error type="NoSuchElementException" message="Message: no such element: Unable to locate element: {&quot;method&quot;:&quot;css selector&quot;,&quot;selector&quot;:&quot;#rso &gt; div:nth-child(1) &gt; div &gt; div &gt; div &gt; div &gt; div &gt; div &gt; div.yuRUbf &gt; a &gt; h3&quot;}&#10;  (Session info: chrome=91.0.4472.114)&#10;">
+</system-out></testcase><testcase classname="search.Search" name="Search the terms on Google -- @1.2 " status="failed" time="16.726235"><error type="NoSuchElementException" message="Message: no such element: Unable to locate element: {&quot;method&quot;:&quot;css selector&quot;,&quot;selector&quot;:&quot;#rso &gt; div:nth-child(1) &gt; div &gt; div &gt; div &gt; div &gt; div &gt; div &gt; div.yuRUbf &gt; a &gt; h3&quot;}&#10;  (Session info: chrome=91.0.4472.114)&#10;">
 <![CDATA[
-Failing step: Then I should see the results ... failed in 10.043s
+Failing step: Then I should see the results ... failed in 10.060s
 Location: features/search.feature:11
 Traceback (most recent call last):
   File "/home/priscilla/.local/lib/python3.8/site-packages/behave/model.py", line 1329, in run
@@ -59,9 +59,9 @@ selenium.common.exceptions.NoSuchElementException: Message: no such element: Una
 <![CDATA[
 @scenario.begin
   Scenario Outline: Search the terms on Google -- @1.2 
-    Given I navigate to the Google Home page ... passed in 5.014s
-    When I search for ruby ... passed in 1.855s
-    Then I should see the results ... failed in 10.043s
+    Given I navigate to the Google Home page ... passed in 5.013s
+    When I search for ruby ... passed in 1.653s
+    Then I should see the results ... failed in 10.060s
 
 @scenario.end
 --------------------------------------------------------------------------------
