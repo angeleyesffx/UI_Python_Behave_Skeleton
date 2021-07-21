@@ -364,6 +364,16 @@ class BasePage(object):
             # if the element disappear return True, else return False
             return False
         return True
+    
+    def wait_for_element (driver, timeout_to_be_visible, selector_type, element):
+        """Given a selector type(id, css selector, xpath, class name, tag name or name), the timeout limit to the
+        element to be visible, this function will wait until the
+        element isn't displayed on screen. """
+        try:
+            WebDriverWait(driver, timeout_to_be_visible).until(EC.visibility_of_element_located((selector_type, element)))
+        except TimeoutException:
+            return False
+        return True
 
     def verify_element_list(driver, timeout, element_list):
         """Given list of element like: LAYOUT_LIST = [{element, selector_type, text_expected}, {element, selector_type, text_expected}],
