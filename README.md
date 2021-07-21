@@ -44,15 +44,16 @@ Download links for your Driver:
 **User Guide of Behave Framework:**
 
 You can find information about behave framework here:  https://behave.readthedocs.io/en/latest/
+You can find information more information about command line here: https://docs.python.org/3/using/cmdline.html
 
 **IMPORTANT ---->>>> If you install python3 instead python using in command line python3:**
 
-*   `python3 -m behave --no-capture` 
+* `python3 -m behave --no-capture` 
 
 For change the environment use -D environment=SOME_ENVIRONMENT like command line below:
         *The default environment is always define by behave.ini*
       
-*   `python -m behave -D environment=homolog` 
+* `python -m behave -D environment=homolog` 
 
 For change the browser use -D browser=SOME_BROWSER like command line below:
         *The default browser is always define by behave.ini*
@@ -65,18 +66,18 @@ For execute a specific feature execute the command line:
 
 For execute a specific WIP scenario, or a list of WIP scenarios use above scenario @wip and execute the command line:
       
-*  `python -m behave -D environment=desenv --tags=@wip` 
+* `python -m behave -D environment=desenv --tags=@wip` 
 
 By default, behave captures stdout, this captured output is only showing if a failure occurs.
 To print output execute the command line:
     
-*    ` python -m behave --no-capture `
+* `python -m behave --no-capture`
 
 **IMPORTANT ---->>>>  You can combine the command lines to execute your project**
 
 Example:
       
-*  `python -m behave --no-capture -D environment=desenv -D browser=firefox --tags=@wip features_path/feature_name.feature` 
+* `python -m behave --no-capture -D environment=desenv -D browser=firefox --tags=@wip features_path/feature_name.feature` 
 
 
 
