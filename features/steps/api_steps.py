@@ -36,6 +36,7 @@ def send_post_some_request(context, body):
     context.response = requests.post(context.endpoint_some_api, auth=HTTPBasicAuth(context.username, context.password), data=payload_some.format(), headers={'Content-Type': 'text/xml'}, verify=False)
     return context.response_some_api
 
+
 @when(u'the request sends POST to the Other API')
 def send_post_other_request(context):
     context.endpoint = get_whatever_endpoint(context)

@@ -5,6 +5,14 @@ import time
 import xml.dom.minidom as DOM
 import xml.etree.ElementTree as ET
 import pymysql
+import os
+import sys
+import yaml
+import datetime
+import argparse
+import requests
+import json
+import csv
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
@@ -13,21 +21,21 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 
 # ----------------------------------------------------------------------------------------------------------------------#
-# BasePage is a common class where the developer can write the necessary methods in python and re-use on               #
-# entire test, make sure the methods that you will write here are flexible, without constants or hardcode              #
-# data.                                                                                                                #
-# Verify method names are readable to facilitate future maintenance and make it easier for other                       #
-# developers to use the method.                                                                                        #
+# BasePage is a common class where the developer can write the necessary functions in python and re-use on              #
+# entire test, make sure the functions which you will write here are flexible, without constants or hardcode            #
+# data.                                                                                                                 #
+# Verify function names are readable to facilitate future maintenance and make it easier for other                      #
+# developers to use the function.                                                                                       #
 # ----------------------------------------------------------------------------------------------------------------------#
 
 # ----------------------------------------------------------------------------------------------------------------------#
 # Import pdb allowed to use the debbuger module using the command line pdb.set_trace(), before the code that you want to#
 # analise.                                                                                                              #
-#   Example:                                                                                                           #
-#           def method_x(args, value):                                                                                 #
-#               pdb.set_trace()                                                                                        #
-#               while True:                                                                                            #
-#                    key = args.popitem(value)                                                                         #
+#   Example:                                                                                                            #
+#           def function_x(args, value):                                                                                #
+#               pdb.set_trace()                                                                                         #
+#               while True:                                                                                             #
+#                    key = args.popitem(value)                                                                          #
 # ----------------------------------------------------------------------------------------------------------------------#
 
 
@@ -39,17 +47,17 @@ class Actions(ActionChains):
 
 class BasePage(object):
 
-    def __init__(self, browser, base_url):
-        self.browser = browser
+    def __init__(self, driver):
+        self.driver = driver
         self.base_url = base_url
         self.timeout = 20
         self.implicit_wait = 20
 
-    # ----------------------------------------------------------------------------------------------------------------------#
-    #                     Methods that manipulate strings information as described                                         #
-    # ----------------------------------------------------------------------------------------------------------------------#
+    # -----------------------------------------------------------------------------------------------------------------#
+    #                     Functions to manipulate strings information as described                                     #
+    # -----------------------------------------------------------------------------------------------------------------#
 
-    ####-------------------------------------------- Random Strings Methods --------------------------------------------####
+    ####---------------------------------------- Random String Functions -------------------------------------------####
 
     def generate_unique_id(chars_number):
         """Generate N chars random string with Lowercase and Uppercase."""
@@ -67,12 +75,12 @@ class BasePage(object):
         return unique_id
 
     def generate_unique_email(username, id, domain_list):
-        """Generate random email, combine generate_unique_id,  generate_unique_lowercase_id or generate_unique_uppercase_id
-         and a list of domains."""
+        """Generate random email, combine generate_unique_id,  generate_unique_lowercase_id or
+        generate_unique_uppercase_id and a list of domains. """
         email = username + '.' + id + random.choice(domain_list)
         return email
 
-    ####----------------------------------------- String Manipulation Methods ------------------------------------------####
+    ####--------------------------------------- String Manipulation Functions --------------------------------------####
 
     def split_string_between(string_value, slice_a, slice_b):
         """Find and validate before-part and return middle part."""
@@ -116,16 +124,16 @@ class BasePage(object):
 
     def empty_string_to_none_string(string_value):
         # Replace the string "" or '' for None.
-        if string_value is '' or "":
+        if string_value == '' or "":
             return None
         else:
             return string_value
 
-    # ----------------------------------------------------------------------------------------------------------------------#
-    #                     Methods that connect and manipulate datasource or database information                           #
-    # ----------------------------------------------------------------------------------------------------------------------#
+    # -----------------------------------------------------------------------------------------------------------------#
+    #                     Functions to connect and manipulate datasource or database information                       #
+    # -----------------------------------------------------------------------------------------------------------------#
 
-    ####-------------------------------------------- Database Methods --------------------------------------------------####
+    ####---------------------------------------- Database Functions ------------------------------------------------####
 
     def open_connection_with_database(host, port, username, password, database):
         try:
@@ -137,7 +145,8 @@ class BasePage(object):
             return db_con
 
     def get_columns_from_dict(source, args_key):
-        """Convert a dict of arguments into a string to columns separate by comma. Example: 'column_1, column_2, column_3'."""
+        """Convert a dict of arguments into a string to columns separate by comma. Example: 'column_1, column_2,
+        column_3'. """
         str_columns = ""
         data_args = source.get(args_key.replace(' ', '_'))
         if data_args is not None:
@@ -191,22 +200,23 @@ class BasePage(object):
         con = db_connection
         con.close()
 
-    # ----------------------------------------------------------------------------------------------------------------------#
-    # DATAPOOL_READ is a method use to get a collection of information from a source archive Dictionaries, Hashmaps, and   #
-    # Hash Tables. This method need 3 arguments: the dict's name, the collection's name and the key that you searching for.#
-    #                                                                                                                      #
-    #   Example:                                  result = datapool_read(DATA_SOURCE, valid_data, 'key_1')                 #
-    #       DATA_SOURCE ={                        print("Results is: ", result)                                            #
-    # 	        "valid_data" :[{                                                                                           #
-    # 	                 "key_1" : "value1",                                                                               #
-    #      	             "key_2" : "value2"       output:  Results is: value1                                              #
-    #      	     }],                                                                                                       #
-    #           "invalid_data" :[{                                                                                         #
-    # 	                "key_1" : "value1",                                                                                #
-    #      	            "key_2" : "value2"                                                                                 #
-    #      	            }]                                                                                                 #
-    # }                                                                                                                    #                                                                          #
-    # ----------------------------------------------------------------------------------------------------------------------#
+    # -----------------------------------------------------------------------------------------------------------------#
+    # DATAPOOL_READ is a function use to get a collection of information from a source archive Dictionaries, Hashmaps, #
+    # and Hash Tables.                                                                                                 #
+    # This function needs 3 arguments: the dict's name, the collection's name and the key that you searching for.      #
+    #                                                                                                                  #
+    #   Example:                                  result = datapool_read(DATA_SOURCE, valid_data, 'key_1')             #
+    #       DATA_SOURCE ={                        print("Results is: ", result)                                        #
+    # 	        "valid_data" :[{                                                                                       #
+    # 	                 "key_1" : "value1",                                                                           #
+    #      	             "key_2" : "value2"       output:  Results is: value1                                          #
+    #      	     }],                                                                                                   #
+    #           "invalid_data" :[{                                                                                     #
+    # 	                "key_1" : "value1",                                                                            #
+    #      	            "key_2" : "value2"                                                                             #
+    #      	            }]                                                                                             #
+    # }                                                                                                                #                                                                          #
+    # -----------------------------------------------------------------------------------------------------------------#
 
     def datapool_read(source, data, key):
         """Get a list of arguments named as 'data' on the 'source' and search the 'key' on that list."""
@@ -217,35 +227,54 @@ class BasePage(object):
             if data_args.get(dt_key) is not None:
                 return data_args.get(dt_key)
             else:
-                message = "No matching results for parameter data = " + data + " on the key = " + key + " was found in DataPool."
+                message = "No matching results for parameter data = " + data + " on the key = " + key + "was found in " \
+                                                                                                        "DataPool. "
                 raise Exception(message)
         else:
-            message = "No matching results for parameter data = " + data + " on the key = " + key + " was found in DataPool."
+            message = "No matching results for parameter data = " + data + " on the key = " + key + "was found in " \
+                                                                                                    "DataPool. "
             raise Exception(message)
 
-    # ----------------------------------------------------------------------------------------------------------------------#
-    # GET_LIST_FROM_SOURCE is a method use to load a data from a source archive. It's useful to get all information   #
-    # from a collection. For example, if you need to POST the same .json and the data don't need to be changed, the data   #
-    # source can emulate the .json.                                                                                        #
-    # This method need 2 arguments: the dict's name and the collection's name:                                             #
-    #   Example:                                                                                                           #
-    #       DATA_SOURCE ={                     payload = get_list_from_source(DATA_SOURCE, 'valid_data')                   #
-    # 	        "valid_data" :[{               print("Payload is: ", payload)                                              #
-    # 	                 "key_1" : "value1",                                                                               #
-    #      	             "key_2" : "value2"                                                                                #
-    #      	     }],                           output:  Payload is:   "valid_data" :[{                                     #
-    #           "invalid_data" :[{                                           "key_1" : "value1",                           #
-    # 	                "key_1" : "value1",                                  "key_2" : "value2"                            #
-    #      	            "key_2" : "value2"                                   }]                                            #
-    #      	            }]                                                                                                 #
-    # }                                                                                                                    #                                                                          #
-    # ----------------------------------------------------------------------------------------------------------------------#
+    def read_yml_file(yml_path):
+        with open(yml_path) as file:
+            data = yaml.full_load(file)
+            return data
 
-    # ---------------------------------------------------------------------------------------------------------------------#
-    #                                            Methods that manipulate lists                                             #
-    # ---------------------------------------------------------------------------------------------------------------------#
+    def select_the_keys_from_yml(yml_path, parent_reference):
+        environments = read_yml_file(yml_path)
+        params = set()
+        if parent_reference == "environment":
+            for key in environments.keys():
+                params.update(environments)
+                return sorted(params)
+        else:
+            for key in environments.keys():
+                params.update(environments[key])
+                return sorted(params)
 
-    ####---------------------------------------------- List Methods ----------------------------------------------------####
+    # -----------------------------------------------------------------------------------------------------------------#
+    # GET_LIST_FROM_SOURCE is a function use to load a data from a source archive. It's useful to get all information  #
+    # from a collection. For example, if you need to POST the same .json and the data don't need to be changed, the    #
+    # data source can emulate the .json.                                                                               #
+    # This function needs 2 arguments: the dict's name and the collection's name:                                      #
+    #   Example:                                                                                                       #
+    #       DATA_SOURCE ={                     payload = get_list_from_source(DATA_SOURCE, 'valid_data')               #
+    # 	        "valid_data" :[{               print("Payload is: ", payload)                                          #
+    # 	                 "key_1" : "value1",                                                                           #
+    #      	             "key_2" : "value2"                                                                            #
+    #      	     }],                           output:  Payload is:   "valid_data" :[{                                 #
+    #           "invalid_data" :[{                                           "key_1" : "value1",                       #
+    # 	                "key_1" : "value1",                                  "key_2" : "value2"                        #
+    #      	            "key_2" : "value2"                                   }]                                        #
+    #      	            }]                                                                                             #
+    # }                                                                                                                #                                                                          #
+    # -----------------------------------------------------------------------------------------------------------------#
+
+    # -----------------------------------------------------------------------------------------------------------------#
+    #                                            Functions to manipulate lists                                         #
+    # -----------------------------------------------------------------------------------------------------------------#
+
+    ####-------------------------------------------- List Functions ------------------------------------------------####
 
     def union_list_without_duplicate_item(list_a, list_b):
         result_list = list(list_a)
@@ -289,27 +318,35 @@ class BasePage(object):
             message = "No matching results for parameter key = " + key + " was found in Dictionary."
             raise Exception(message)
 
-    # ----------------------------------------------------------------------------------------------------------------------#
-    #                                 Methods exclusive for UI testing tool                                                #
-    # ----------------------------------------------------------------------------------------------------------------------#
+    # -----------------------------------------------------------------------------------------------------------------#
+    #                                 Functions exclusive for UI testing tool                                          #
+    # -----------------------------------------------------------------------------------------------------------------#
 
-    # ----------------------------------------------------------------------------------------------------------------------#
-    # Method that use "selector_type" as (str)argument is implementing selenium.webdriver.common.by                        #
-    #                                                                                                                      #
-    # class selenium.webdriver.common.by.By[source]                                                                        #
-    # Set of supported locator strategies.                                                                                 #
-    #    CLASS_NAME = 'class name'                                                                                         #
-    #    CSS_SELECTOR = 'css selector'                                                                                     #
-    #    ID = 'id'                                                                                                         #
-    #    LINK_TEXT = 'link text'                                                                                           #
-    #    NAME = 'name'                                                                                                     #
-    #    PARTIAL_LINK_TEXT = 'partial link text'                                                                           #
-    #    TAG_NAME = 'tag name'                                                                                             #
-    #    XPATH = 'xpath'                                                                                                   #
-    # ----------------------------------------------------------------------------------------------------------------------#
+    # -----------------------------------------------------------------------------------------------------------------#
+    # Function that use "selector_type" as (str)argument is implementing selenium.webdriver.common.by                  #
+    #                                                                                                                  #
+    # class selenium.webdriver.common.by.By[source]                                                                    #
+    # Set of supported locator strategies.                                                                             #
+    #    CLASS_NAME = 'class name'                                                                                     #
+    #    CSS_SELECTOR = 'css selector'                                                                                 #
+    #    ID = 'id'                                                                                                     #
+    #    LINK_TEXT = 'link text'                                                                                       #
+    #    NAME = 'name'                                                                                                 #
+    #    PARTIAL_LINK_TEXT = 'partial link text'                                                                       #
+    #    TAG_NAME = 'tag name'                                                                                         #
+    #    XPATH = 'xpath'                                                                                               #
+    # -----------------------------------------------------------------------------------------------------------------#
+    def page_has_loaded(driver):
+        page_state = driver.execute_script('return document.readyState;')
+        if page_state == 'complete':
+            pass
+        else:
+            message = "The page isn't load, or take to long to load!"
+            raise Exception(message)
+
     def element_exists(driver, timeout, selector_type, element):
-        """Given a selector type(id, css selector, xpath, class name, tag name or name), timeout limit and the element, this method will search it
-        on the screen and return a boolean (True/False)."""
+        """Given a selector type(id, css selector, xpath, class name, tag name or name), timeout limit and the
+        element, this function will search it on the screen and return a boolean (True/False). """
         try:
             # wait for the element to appear
             WebDriverWait(driver, timeout).until(EC.presence_of_element_located((selector_type, element)))
@@ -319,8 +356,8 @@ class BasePage(object):
         return True
 
     def fast_element_exists(driver, selector_type, element):
-        """Given a selector type(id, css selector, xpath, class name, tag name or name), timeout limit and the element, this method will search it
-        on the screen and return a boolean (True/False)."""
+        """Given a selector type(id, css selector, xpath, class name, tag name or name), timeout limit and the
+        element, this function will search it on the screen and return a boolean (True/False). """
         try:
             # wait for the element to appear
             driver.find_element(selector_type, element)
@@ -330,13 +367,14 @@ class BasePage(object):
         return True
 
     def locate_element(driver, timeout, selector_type, element):
-        """Given a selector type(id, css selector, xpath, class name, tag name or name), timeout limit and the element, this method will search it
-        on the screen and return it."""
+        """Given a selector type(id, css selector, xpath, class name, tag name or name), timeout limit and the
+        element, this function will search it on the screen and return it. """
         try:
             # wait for the element to appear, if so return it
             return WebDriverWait(driver, timeout).until(EC.presence_of_element_located((selector_type, element)))
         except TimeoutException:
-            message = "The element " + element + " or the type " + selector_type + " can't be found or it doesn't exist in the screen."
+            message = "The element " + element + " or the type " + selector_type + "can't be found or it doesn't " \
+                                                                                   "exist in the screen. "
             raise Exception(message)
 
     def get_the_ancestor_element(element, parent_xpath):
@@ -348,17 +386,19 @@ class BasePage(object):
             raise Exception(message)
 
     def wait_until_disappears(driver, timeout_to_be_visible, timeout_to_be_invisible, selector_type, element):
-        """Given a selector type(id, css selector, xpath, class name, tag name or name), the timeout limit to the element to be visible and the timeout limit to the element to be disappear,
-        this method will wait until the element isn't displayed on screen."""
+        """Given a selector type(id, css selector, xpath, class name, tag name or name), the timeout limit to the
+        element to be visible and the timeout limit to the element to be disappear, this function will wait until the
+        element isn't displayed on screen. """
         try:
             # wait for loading element to appear
-            # - required to prevent prematurely checking if element has disappeared, before it has had a chance to appear
+            # -required to prevent prematurely checking if element has disappeared, before it has had a chance to appear
             if BasePage.element_exists(driver, timeout_to_be_visible, selector_type, element):
                 # then wait for the element to disappear
                 WebDriverWait(driver, timeout_to_be_invisible).until_not(
                     EC.presence_of_element_located((selector_type, element)))
             else:
-                message = "The element " + element + " or the type " + selector_type + " can't be found or it doesn't exist in the screen."
+                message = "The element " + element + " or the type " + selector_type + "can't be found or it doesn't " \
+                                                                                       "exist in the screen. "
                 raise Exception(message)
         except TimeoutException:
             # if the element disappear return True, else return False
@@ -375,9 +415,20 @@ class BasePage(object):
             return False
         return True
 
+    def wait_for_element (driver, timeout_to_be_visible, selector_type, element):
+        """Given a selector type(id, css selector, xpath, class name, tag name or name), the timeout limit to the
+        element to be visible, this function will wait until the
+        element isn't displayed on screen. """
+        try:
+            WebDriverWait(driver, timeout_to_be_visible).until(EC.visibility_of_element_located((selector_type, element)))
+        except TimeoutException:
+            return False
+        return True
+
     def verify_element_list(driver, timeout, element_list):
-        """Given list of element like: LAYOUT_LIST = [{element, selector_type, text_expected}, {element, selector_type, text_expected}],
-        this method will verify if the elements on the list is on the screen or if the expected data text is on the screen. If it fails a report is return."""
+        """Given list of element like: LAYOUT_LIST = [{element, selector_type, text_expected}, {element,
+        selector_type, text_expected}], this function will verify if the elements on the list is on the screen or if
+        the expected data text is on the screen. If it fails a report is return. """
         fail_results = []
         for key in element_list:
             element = BasePage.get_data_from_dict(key, "element")
@@ -418,7 +469,7 @@ class BasePage(object):
             if element.get_attribute(attribute) != expected_attribute_content:
                 result_list.append(element)
         if result_list is None:
-            message = "The provied list is empty or the method can't find any results."
+            message = "The provied list is empty or the function can't find any results."
             raise Exception(message)
         else:
             return result_list
@@ -432,28 +483,28 @@ class BasePage(object):
             if attribute_content == expected_attribute_content:
                 option.click()
 
-    # ----------------------------------------------------------------------------------------------------------------------#
-    #                     Methods manipulate XML files information and responses                                           #
-    # ----------------------------------------------------------------------------------------------------------------------#
+    # -----------------------------------------------------------------------------------------------------------------#
+    #                 Functions to manipulate XML files information and responses                                      #
+    # -----------------------------------------------------------------------------------------------------------------#
 
-    ####----------------------------------------------- XML Methods ----------------------------------------------------####
-    # ----------------------------------------------------------------------------------------------------------------------#
-    # READ_XML_FILE is a method use to load a generic .xml archive.                                                        #
-    # This method need 1 argument: the path of the .xml. It will return the generic.xml allowing to access namespaces      #
-    # and/or edit them if it's necessary.                                                                                  #
-    #   Example:                                                                                                           #
-    #        payload = read_xml_file(os.path.dirname(__file__) + '\\data_source\\generic.xml')                             #	                                                                                               #
-    # ----------------------------------------------------------------------------------------------------------------------#
+    ####----------------------------------------------- XML Functions ----------------------------------------------####
+    # -----------------------------------------------------------------------------------------------------------------#
+    # READ_XML_FILE is a function use to load a generic .xml archive.                                                  #
+    # This function need 1 argument: the path of the .xml. It will return the generic.xml allowing to access namespaces#
+    # and/or edit them if it's necessary.                                                                              #
+    #   Example:                                                                                                       #
+    #        payload = read_xml_file(os.path.dirname(__file__) + '\\data_source\\generic.xml')                         #	                                                                                               #
+    # -----------------------------------------------------------------------------------------------------------------#
 
     def read_xml_file(xml_file):
-        """Given a XML file, this method open it and return entire XML body."""
+        """Given a XML file, this function open it and return entire XML body."""
         xml = open(xml_file, 'r', encoding='utf8')
         body = xml.read()
         return body
 
     # ----------------------------------------------------------------------------------------------------------------------#
-    # GET_XML_ROOT is a method use to get the root from a .xml response tree.                                              #
-    # This method need 1 argument: the response .xml from an API. It will get the content of the response and return the   #
+    # GET_XML_ROOT is a function use to get the root from a .xml response tree.                                             #
+    # This function need 1 argument: the response .xml from an API. It will get the content of the response and return the  #
     # root.                                                                                                                #
     #   Example:                                                                                                           #
     #        root_tree = get_xml_root(xml_response)                                                                        #	                                                                                               #
@@ -478,7 +529,7 @@ class BasePage(object):
             raise Exception(message)
 
     def get_xml_root(response, endpoint):
-        """Given a XML File or XML response from an API, this method open it and return the root(iterable)."""
+        """Given a XML File or XML response from an API, this function open it and return the root(iterable)."""
         response_content = response
         if type(response_content) != bytes and type(response_content) != str:
             response_content = response.content.decode("utf-8")
@@ -495,7 +546,8 @@ class BasePage(object):
         return response_root
 
     def count_blocks_by_id_tag_on_xml(response, tag, endpoint):
-        """Given a XML response from API and specific unique id tag, this method count the number of blocks in the XML response."""
+        """Given a XML response from API and specific unique id tag, this function count the number of blocks in the
+        XML response. """
         # Get the root from the XML File or XML response from an API
         count_blocks = 0
         response_root = BasePage.get_xml_root(response, endpoint)
@@ -505,7 +557,8 @@ class BasePage(object):
         return count_blocks
 
     def find_value_on_xml(response, tag, endpoint):
-        """Given a XML response from API and specific tag name, this method search that tag name and return the value."""
+        """Given a XML response from API and specific tag name, this function search that tag name and return the
+        value. """
         # Get the root from the XML File or XML response from an API
         response_root = BasePage.get_xml_root(response, endpoint)
         # for element in response_root.iter():
@@ -517,7 +570,8 @@ class BasePage(object):
             return element.text
 
     def find_values_inside_blocks_on_xml(response, tag, endpoint):
-        """Given a XML response from API and specific block and tag name, this method search that tag name and return the value."""
+        """Given a XML response from API and specific block and tag name, this function search that tag name and return
+        the value. """
         # Get the root from the XML File or XML response from an API
         values_list = []
         position = 1
@@ -531,7 +585,8 @@ class BasePage(object):
         return values_list
 
     def get_data_from_tag_parent_list(tag_parent_list, tag_name, tag_value):
-        """This method search the specific tag name and tag value inside the return of the method find_values_inside_blocks_on_xml, then return the specific data block."""
+        """This function search the specific tag name and tag value inside the return of the function
+        find_values_inside_blocks_on_xml, then return the specific data block. """
         index = 1
         values_list = []
         for elem in tag_parent_list:
@@ -560,7 +615,8 @@ class BasePage(object):
         return new_response
 
     def tag_exists_on_xml(response, tag, endpoint):
-        """Given a XML response from API and specific tag name, this method search if that tag name exists on the XML response and return a boolean."""
+        """Given a XML response from API and specific tag name, this function search if that tag name exists on the XML
+        response and return a boolean. """
         # Get the root from the XML File or XML response from an API
         response_root = BasePage.get_xml_root(response, endpoint)
         # Search the element where the tag name is
@@ -569,7 +625,8 @@ class BasePage(object):
         return False
 
     def tag_list_exists_on_xml(response, tag_list, endpoint):
-        """Given a XML response from API and specific list of tags, this method verify if all tags exists in the response and return a boolean."""
+        """Given a XML response from API and specific list of tags, this function verify if all tags exists in the
+        response and return a boolean. """
         args = tag_list
         # Search the list of elements
         for args_key, args_value in args.items():
@@ -582,7 +639,8 @@ class BasePage(object):
         return True
 
     def tag_list_is_on_xml(response, tag_list, namespace, endpoint):
-        """Given a XML response from API and specific list of tags, this method verify if all tags are in the response."""
+        """Given a XML response from API and specific list of tags, this function verify if all tags are in the
+        response. """
         args = tag_list
         # Search the list of elements
         for key in args.items():
@@ -596,7 +654,8 @@ class BasePage(object):
                 raise Exception(message)
 
     def verify_hit(response, tag_list, endpoint):
-        """Given a XML response from API and specific list of tags, this method verify if all tags are in the response."""
+        """Given a XML response from API and specific list of tags, this function verify if all tags are in the
+        response. """
         args = tag_list
         # Search the list of elements
         for key in args.items():
@@ -609,7 +668,7 @@ class BasePage(object):
 
     def confirm_persistence_of_response_in_different_sources(source_a, source_b, args, namespace_a, namespace_b,
                                                              source_name_a, source_name_b, endpoint_a, endpoint_b):
-        """Given an XML File or XML response in different sources, this method search in the both sources the tag names
+        """Given an XML File or XML response in different sources, this function search in the both sources the tag names
         and validate the values."""
         fail_list = []
         for key in args.items():
@@ -635,7 +694,7 @@ class BasePage(object):
 
     def compare_values_from_two_xml(xml_a, xml_b, args_a, args_b, namespace_a, namespace_b, source_name_a,
                                     source_name_b, endpoint_a, endpoint_b):
-        """Given two XML Files, this method search in the both files the tag name arguments and validate the values."""
+        """Given two XML Files, this function search in the both files the tag name arguments and validate the values."""
         fail_list = []
         while True:  # It simulate a DO/WHILE
             # Pop the first tag name from both arguments list
@@ -667,8 +726,9 @@ class BasePage(object):
             raise Exception(message)
 
     def list_all_paths_on_xml_starting_from_node(path_list, response_root, start_path, namespace, node_name):
-        """Given a XML File or XML response from an API, it will list all path starting it from a specific node. It will
-        return the entire path for example 'Body > Parent > Child1' if it start from Body the path will be 'Parent/Child1'"""
+        """Given a XML File or XML response from an API, it will list all path starting it from a specific node. It
+        will return the entire path for example 'Body > Parent > Child1' if it start from Body the path will be
+        'Parent/Child1' """
         # Start from the root of XML File or XML response from an API
         for element in response_root:
             element_name = ET.QName(element.tag)
@@ -708,12 +768,13 @@ class BasePage(object):
     def compare_pathlist_from_two_xml_responses(context, system_name_a, system_name_b, response_a, response_b,
                                                 namespace_a, namespace_b, node_name_a, node_name_b, endpoint_a,
                                                 endpoint_b):
-        """Given two XML Files or two XML responses, this method search in the both responses or both files divergent
-        paths starting from a specific node and validate it. If any divergent path is found an report of divergences will be provide."""
+        """Given two XML Files or two XML responses, this function search in the both responses or both files divergent
+        paths starting from a specific node and validate it. If any divergent path is found an report of divergences
+        will be provide. """
         # Get both root
         xml_root_a = BasePage.get_xml_root(response_a, endpoint_a)
         xml_root_b = BasePage.get_xml_root(response_b, endpoint_b)
-        # Define the path lists and result lists before call the method
+        # Define the path lists and result lists before call the function
         list_a = []
         list_b = []
         result_a = []
@@ -758,13 +819,54 @@ class BasePage(object):
         return (string_a.rstrip() + string_b.rstrip())
 
     # ----------------------------------------------------------------------------------------------------------------------#
-    #                     Methods manipulate JSON files information and responses                                          #
+    #                    Functions to manipulate JSON files information and responses                                       #
     # ----------------------------------------------------------------------------------------------------------------------#
 
-    ####----------------------------------------------- JSON Methods ---------------------------------------------------####
+    ####----------------------------------------------- JSON Functions --------------------------------------------------####
+
+    def load_json(json_file_path):
+        json_file = json_file_path
+        with open(json_file, 'r') as file:
+            json_data = json.load(file)
+            return json_data
+
+    def load_json_as_string(json_file_path):
+        json_file = json_file_path
+        with open(json_file, 'r') as file:
+            json_data = json.loads(file)
+            return json_data
+
+    def load_json_as_dict(json_file_path):
+        json_file = json_file_path
+        with open(json_file, 'r') as file:
+            json_data = json.load(file)
+            return json_data
+
+    def get_json_keys(json_file_path):
+        json_file = load_json_as_dict(json_file_path)
+        return json_file.keys()
+
+    def get_json_values(json_file_path):
+        json_file = load_json_as_dict(json_file_path)
+        return json_file.values()
+
+    def write_json_as_string(json_string):
+        new_json = json.dumps(json_string, sort_keys=True)
+        # open("new_json.json", "w").write(new_json) --> in a new file
+        return new_json
+
+    def write_json_as_dict(json_file_path):
+        new_json = json.dump(json_string, sort_keys=True)
+        # open("new_json.json", "w").write(new_json) --> in a new file
+        return new_json
+
+    def print_new_json(json_file_path, data):
+        args = load_csv("datamass_creation/price.csv")
+        json1 = edit_json(json_file_path, args)
+        print("Editado.....", json1)
 
     def key_exists(context, key):
-        json_key = BasePage.find_key_on_json(context.json, key)
+        json_key = find_key_on_json(context.json, key)
         if json_key == key:
             return True
         else:
@@ -773,7 +875,7 @@ class BasePage(object):
     def value_is_correct(context, key, value):
         if value == 'null':
             value = None
-        if BasePage.key_exists(context, key) is True:
+        if key_exists(context, key) is True:
             return True
         if context.value == value:
             return True
@@ -786,17 +888,17 @@ class BasePage(object):
         if type(obj) is dict:
             for k, v in obj.items():
                 if isinstance(v, dict):
-                    return BasePage.find_value_json(v, key)
+                    return find_value_json(v, key)
         elif type(obj) is list:
             for k, v in enumerate(obj):
-                return BasePage.find_value_json(v, key)
+                return find_value_json(v, key)
 
     def find_key_on_json(obj, key):
         if key in obj:
             return key
         for k, v in obj.items():
             if isinstance(v, dict):
-                item = BasePage.find_key_on_json(v, key)
+                item = find_key_on_json(v, key)
                 if item is not None:
                     return item
 
@@ -804,19 +906,119 @@ class BasePage(object):
         if key in obj:
             obj[key] = value
             return obj[key]
+        if type(obj) is str:
+            json.dumps(obj, indent=2, sort_keys=True)
         if type(obj) is dict:
             for k, v in obj.items():
                 if isinstance(v, dict):
-                    item = BasePage.find_key_and_replace_value_json(v, key, value)
+                    item = find_key_and_replace_value_json(v, key, value)
                     if item is not None:
-                        return json.dumps(obj, indent=4, sort_keys=True)
+                        return json.dumps(obj, indent=2, sort_keys=True)
         elif type(obj) is list:
             for k, v in enumerate(obj):
-                item = BasePage.find_key_and_replace_value_json(v, key, value)
+                item = find_key_and_replace_value_json(v, key, value)
                 if item is not None:
-                    return json.dumps(obj, indent=4, sort_keys=True)
+                    return json.dumps(obj, indent=2, sort_keys=True)
 
-    def edit_json(json_file_path, args):
+    def simple_edit_json(json_file_path, args_data):
+        json_file = json_file_path
+        if type(args_data) is list:
+            for index, item in enumerate(args_data):
+                args = dict(args_data[index])
+        else:
+            args = args_data
+        with open(json_file, 'r') as file:
+            data = json.load(file)
+            if type(data) is list:
+                for index, item in enumerate(data):
+                    json_data = dict(data[index])
+            else:
+                json_data = data
+            for args_key, args_value in args.items():
+                for key, value in json_data.items():
+                    if args_key == key and args_value != value:
+                        json_data[key] = args_value
+                        v = json_data[key]
+                    else:
+                        v = json_data[key]
+                        if (type(v) is dict) or (type(v) is list):
+                            item = find_key_and_replace_value_json(v, args_key, args_value)
+                            if (item is not None) or (type(item) is str):
+                                json.dumps(json_data, indent=2, sort_keys=True)
+                            for v_key, v_value in v.items():
+                                v1 = v[v_key]
+                                if (type(v1) is dict) or (type(v1) is list):
+                                    find_key_and_replace_value_json(v1, args_key, args_value)
+        new_json = json.dumps(json_data, indent=2, sort_keys=True)
+        return new_json
+
+    def edit_json(json_file_path, args_data):
+        new_json = []
+        json_file = json_file_path
+        if type(args_data) is list:
+            for index, item in enumerate(args_data):
+                args = eval(args_data[index])
+                with open(json_file, 'r') as file:
+                    data = json.load(file)
+                    if type(data) is list:
+                        for index, item in enumerate(data):
+                            json_data = dict(data[index])
+                    else:
+                        json_data = data
+                    for args_key, args_value in args.items():
+                        for key, value in json_data.items():
+                            if args_key == key and args_value != value:
+                                json_data[key] = args_value
+                                v = json_data[key]
+                            else:
+                                v = json_data[key]
+                                if (type(v) is dict) or (type(v) is list):
+                                    item = find_key_and_replace_value_json(v, args_key, args_value)
+                                    if (item is not None) or (type(item) is str):
+                                        json.dumps(json_data, indent=2, sort_keys=True)
+                                    for v_key, v_value in v.items():
+                                        v1 = v[v_key]
+                                        if (type(v1) is dict) or (type(v1) is list):
+                                            find_key_and_replace_value_json(v1, args_key, args_value)
+                new_json.append(json.dumps(json_data, sort_keys=True))
+        if type(args_data) is dict:
+            args = args_data
+            with open(json_file, 'r') as file:
+                data = json.load(file)
+                if type(data) is list:
+                    for index, item in enumerate(data):
+                        json_data = eval(data[index])
+                else:
+                    json_data = data
+                for args_key, args_value in args.items():
+                    for key, value in json_data.items():
+                        if args_key == key and args_value != value:
+                            json_data[key] = args_value
+                            v = json_data[key]
+                        else:
+                            v = json_data[key]
+                            if (type(v) is dict) or (type(v) is list):
+                                item = find_key_and_replace_value_json(v, args_key, args_value)
+                                if (item is not None) or (type(item) is str):
+                                    json.dumps(json_data, indent=2, sort_keys=True)
+                                for v_key, v_value in v.items():
+                                    v1 = v[v_key]
+                                    if (type(v1) is dict) or (type(v1) is list):
+                                        find_key_and_replace_value_json(v1, args_key, args_value)
+            new_json.append(json.dumps(json_data, sort_keys=True))
+        return new_json
+
+    def load_csv(csv_file_path):
+        new_json = []
+        with open(csv_file_path, mode='r') as csv_file:
+            csv_reader = csv.DictReader(csv_file)
+            line_count = 0
+            for row in csv_reader:
+                new_json.append(json.dumps(row, sort_keys=True))
+        print(type(new_json))
+        return new_json
+    
+    def old_edit_json(json_file_path, args):
         json_file = json_file_path
         with open(json_file, 'r') as file:
             json_data = json.load(file)
@@ -826,10 +1028,11 @@ class BasePage(object):
                     if (type(v) is dict) or (type(v) is list):
                         item = BasePage.find_key_and_replace_value_json(v, args_key, args_value)
                         if (item is not None) or (type(item) is str):
-                            json.dumps(json_data, indent=4, sort_keys=True)
+                            json.dumps(json_data, indent=2, sort_keys=True)
                         for v_key, v_value in v.items():
                             v1 = v[v_key]
                             if (type(v1) is dict) or (type(v1) is list):
                                 BasePage.find_key_and_replace_value_json(v1, args_key, args_value)
-        new_json = json.dumps(json_data, indent=4, sort_keys=True)
+        new_json = json.dumps(json_data, indent=2, sort_keys=True)
         return new_json
+

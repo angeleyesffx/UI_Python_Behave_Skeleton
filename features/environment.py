@@ -50,18 +50,21 @@ def before_scenario(context, scenario):
     browser_name = context.config.userdata.get('browser')
     driver = browser_config(context, browser_name)
     context.browser = driver
-    context.browser.implicitly_wait(10)
-    context.browser.set_page_load_timeout(10)
+    context.browser.implicitly_wait(120)
+    context.browser.set_page_load_timeout(120)
     context.location = context.config.userdata.get('environment')
     environment = yaml.safe_load(open(os.path.dirname(__file__) + "/config.yml"))
-    context.location = environment.get(context.config.userdata['environment']).get('url')
+    context.location = "https://admin-angeleyes-platform.com/login"
+    context.user ="angeleyes@mail.com"
+    context.password= "@testing&1234"
     context.username_some_api = environment.get(context.config.userdata['environment']).get('username_some_api')
     context.password_some_api = environment.get(context.config.userdata['environment']).get('password_some_api')
     context.username_whatever_api = environment.get(context.config.userdata['environment']).get('username_whatever_api')
     context.password_whatever_api = environment.get(context.config.userdata['environment']).get('password_whatever_api')
+    context.base_url ="https://admin-angeleyes-platform.com/api/appweb"
     context.some_api_url = environment.get(context.config.userdata['environment']).get('some_api_url')
     context.whatever_api = environment.get(context.config.userdata['environment']).get('whatever_api_url')
-    context.browser.get(context.location)
+    #context.browser.get(context.location)
 
     #--------------iPhone--------------#
     #driver = webdriver.Remote(browser_name="iphone", command_executor='http://172.24.101.36:3001/hub')
@@ -71,6 +74,7 @@ def before_scenario(context, scenario):
 
 def after_scenario(context, scenario):
     if scenario.status == 'failed':
+        pass
         take_screenshot_on_failure(context, scenario)
         context.browser.close()
     else:

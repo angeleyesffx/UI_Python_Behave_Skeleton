@@ -44,6 +44,7 @@ Download links for your Driver:
 **User Guide of Behave Framework:**
 
 You can find information about behave framework here:  https://behave.readthedocs.io/en/latest/
+You can find information more information about command line here: https://docs.python.org/3/using/cmdline.html
 
 You can find information more information about command line here: https://docs.python.org/3/using/cmdline.html
 

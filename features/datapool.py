@@ -6,6 +6,9 @@ DATA_ACCESS = {
     "ruby": {
         'language': 'ruby on rails',
         'type': 1
+    },
+    "valid_user": {
+        'language': 'ruby on rails',
+        'type': 1
     }
-
 }
