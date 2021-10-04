@@ -40,30 +40,30 @@ Download links for your Driver:
 | Firefox:| https://github.com/mozilla/geckodriver/releases                       | 
 | Safari: | https://webkit.org/blog/6900/webdriver-support-in-safari-10/          | 
        
-**Linux Ubuntu**
+**Linux Ubuntu Reinstall**
 If you have a Drive installed, and you need to update it:
 
 * `sudo apt-get --only-upgrade install google-chrome-stable`
 
-If you have a Drive installed, and you need to delete it:
+***Step 1: Delete it***
 * `sudo rm -f /usr/bin/chromedriver`
 * `sudo rm -f /usr/local/bin/chromedriver`
 * `sudo rm -f /usr/local/share/chromedriver`
 
-Download:
-Update and install dependencies
+***Step 2: Download, Update and install dependencies***
 * `sudo apt update -y && sudo apt-get install -y libxss1 libappindicator1 libindicator7 xvfb unzip`
 
-Download chromedriver, unzip and make it executable Google Chromium Site
+***Step 3: Download driver and unzip it***
 * `wget https://chromedriver.storage.googleapis.com/{driver_version}/chromedriver_linux64.zip` 
 * `unzip chromedriver_linux64.zip`
 * `chmod +x chromedriver`
 
-Move chromedriver executable and create symlinks
+***Step 4: Move the driver executable and create symlinks***
 * `sudo mv -f chromedriver /usr/local/share/chromedriver`
 * `sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver` 
 * `sudo ln -s /usr/local/share/chromedriver /usr/bin/chromedriver` 
-* 
+
+
 **User Guide of Behave Framework:**
 
 You can find information about behave framework here:  https://behave.readthedocs.io/en/latest/
@@ -83,7 +83,7 @@ For change the environment use -D environment=SOME_ENVIRONMENT like command line
 For change the browser use -D browser=SOME_BROWSER like command line below:
         *The default browser is always define by behave.ini*
        
-*  `python -m behave -D browser=headless-chrome` 
+* `python -m behave -D browser=headless-chrome` 
 
 For execute a specific feature execute the command line:
         
