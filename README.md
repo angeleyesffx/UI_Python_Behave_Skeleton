@@ -41,6 +41,7 @@ Download links for your Driver:
 | Safari: | https://webkit.org/blog/6900/webdriver-support-in-safari-10/          | 
        
 **Linux Ubuntu Reinstall**
+
 If you have a Drive installed, and you need to update it:
 
 * `sudo apt-get --only-upgrade install google-chrome-stable`
