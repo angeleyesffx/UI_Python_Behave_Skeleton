@@ -40,7 +40,30 @@ Download links for your Driver:
 | Firefox:| https://github.com/mozilla/geckodriver/releases                       | 
 | Safari: | https://webkit.org/blog/6900/webdriver-support-in-safari-10/          | 
        
+**Linux Ubuntu**
+If you have a Drive installed, and you need to update it:
 
+* `sudo apt-get --only-upgrade install google-chrome-stable`
+
+If you have a Drive installed, and you need to delete it:
+* `sudo rm -f /usr/bin/chromedriver`
+* `sudo rm -f /usr/local/bin/chromedriver`
+* `sudo rm -f /usr/local/share/chromedriver`
+
+Download:
+Update and install dependencies
+* `sudo apt update -y && sudo apt-get install -y libxss1 libappindicator1 libindicator7 xvfb unzip`
+
+Download chromedriver, unzip and make it executable Google Chromium Site
+* `wget https://chromedriver.storage.googleapis.com/{driver_version}/chromedriver_linux64.zip` 
+* `unzip chromedriver_linux64.zip`
+* `chmod +x chromedriver`
+
+Move chromedriver executable and create symlinks
+* `sudo mv -f chromedriver /usr/local/share/chromedriver`
+* `sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver` 
+* `sudo ln -s /usr/local/share/chromedriver /usr/bin/chromedriver` 
+* 
 **User Guide of Behave Framework:**
 
 You can find information about behave framework here:  https://behave.readthedocs.io/en/latest/
