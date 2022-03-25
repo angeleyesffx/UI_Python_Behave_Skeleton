@@ -2,7 +2,7 @@
 
 **Install Python/behave framework**
 
-**IMPORTANT ---->>>>  This automation needs Python 3.6 or above**
+**IMPORTANT ---->>>>  This automation needs Python 3.8 or above**
 
 ***Step 1:*** Download and Install the latest version of Python on the official site: https://www.python.org/downloads/
         
@@ -13,8 +13,17 @@ You can find Installation Guide to your system here:  https://realpython.com/ins
         
 You can find Installation Guide to your system here:  https://pypi.org/project/pip/
 
+***Step 3:*** Create a virtual environment
 
-***Step 3:*** Install behave and all dependencies listed on requirements.txt inside your project
+Inside Pytest folder, follow the steps described at:
+
+https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment
+
+Then activate the virtual environment by running the command:
+
+* `source env/bin/activate`
+
+***Step 4:*** Install all dependencies listed on requirements.txt inside your project
         Execute the command line:
         
 * `pip install -r requirements.txt` 
@@ -27,21 +36,20 @@ You can find Installation Guide to your system here:  https://pypi.org/project/p
         
 * `pip install SomeDependencie` 
 
-***Step 4:*** Install Selenium and the apropriate webdrivers
+***Step 5:*** Install Selenium, and the appropriate webdrivers
        
-You can find a installation Guide here:  https://selenium-python.readthedocs.io/installation.html
+You can find an installation Guide here:  https://selenium-python.readthedocs.io/installation.html
 Download links for your Driver:
         
         
 | Browser | Link                                                                  |
 | ------  | --------------------------------------------------------------------- |
-| Chrome: | https://sites.google.com/chromium.org/driver/                         |
+| Chrome: | https://sites.google.com/a/chromium.org/chromedriver/downloads        |
 | Edge:   | https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/ | 
 | Firefox:| https://github.com/mozilla/geckodriver/releases                       | 
 | Safari: | https://webkit.org/blog/6900/webdriver-support-in-safari-10/          | 
-       
-**Linux Ubuntu Reinstall**
 
+**Linux Ubuntu Reinstall**
 If you have a Drive installed, and you need to update it:
 
 * `sudo apt-get --only-upgrade install google-chrome-stable`
@@ -64,6 +72,39 @@ If you have a Drive installed, and you need to update it:
 * `sudo ln -s /usr/local/share/chromedriver /usr/local/bin/chromedriver` 
 * `sudo ln -s /usr/local/share/chromedriver /usr/bin/chromedriver` 
 
+For Mac:
+https://www.swtestacademy.com/install-chrome-driver-on-mac/
+
+
+For Linux Ubuntu:
+
+***Chrome:***
+
+***Step 1: Download Geckodriver***
+*   `wget -N https://chromedriver.storage.googleapis.com/{driver_version}/chromedriver_linux64.zip -P ~/`
+
+***Step 2: Extract the file***
+*   `tar -xvzf chomedriver*`
+
+***Step 3: Make it executable***
+*   `sudo mv geckodriver /usr/bin/chomedriver`
+*   `sudo chown root:root /usr/bin/chomedriver`
+*   `sudo chmod +x /usr/bin/chomedriver`
+
+***Firefox:***
+
+***Step 1: Download Geckodriver***
+*   `wget https://github.com/mozilla/geckodriver/releases/download/{driver_version}/geckodriver-{driver_version}-linux64.tar.gz`
+
+***Step 2: Extract the file***
+*   `tar -xvzf geckodriver*`
+
+***Step 3: Make it executable***
+*   `sudo mv geckodriver /usr/bin/geckodriver`
+*   `sudo chown root:root /usr/bin/geckodriver`
+*   `sudo chmod +x /usr/bin/geckodriver`
+
+       
 
 **User Guide of Behave Framework:**
 
@@ -84,7 +125,7 @@ For change the environment use -D environment=SOME_ENVIRONMENT like command line
 For change the browser use -D browser=SOME_BROWSER like command line below:
         *The default browser is always define by behave.ini*
        
-* `python -m behave -D browser=headless-chrome` 
+*  `python -m behave -D browser=headless-chrome` 
 
 For execute a specific feature execute the command line:
         
